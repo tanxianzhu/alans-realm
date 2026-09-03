@@ -1,0 +1,109 @@
+---
+import type { AnswerTranscriptParagraph } from '../../data/answers/how-to-learn-game-rules';
+
+interface Props {
+  transcript: AnswerTranscriptParagraph[];
+}
+
+const { transcript } = Astro.props;
+---
+
+<section class="answer-transcript" aria-labelledby="answer-transcript-title" data-answer-transcript>
+  <header class="answer-transcript__header">
+    <p class="answer-transcript__eyebrow">Full transcript</p>
+    <h2 id="answer-transcript-title">Alan's answer, word for word.</h2>
+  </header>
+  <div class="answer-transcript__body">
+    {transcript.map((paragraph, index) => (
+      <button
+        type="button"
+        class="answer-transcript__paragraph"
+        data-transcript-start={paragraph.start}
+        data-transcript-end={paragraph.end}
+      >
+        <span class="answer-transcript__number">{String(index + 1).padStart(2, '0')}</span>
+        <span class="answer-transcript__text">{paragraph.text}</span>
+      </button>
+    ))}
+  </div>
+</section>
+
+<style>
+  .answer-transcript {
+    padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(3rem, 8vw, 6rem);
+  }
+  .answer-transcript__header {
+    border-top: 1px solid var(--color-line);
+    padding-top: 1.25rem;
+  }
+  .answer-transcript__eyebrow {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    margin: 0 0 0.75rem;
+    text-transform: uppercase;
+  }
+  .answer-transcript h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 3.4rem);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin: 0;
+    max-width: 14ch;
+  }
+  .answer-transcript__body {
+    margin: clamp(2rem, 5vw, 3.5rem) 0 0;
+    max-width: 44rem;
+  }
+  .answer-transcript__paragraph {
+    align-items: start;
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--color-line);
+    color: var(--color-muted);
+    cursor: pointer;
+    display: grid;
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.7vw, 1.25rem);
+    gap: 1.25rem;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    line-height: 1.6;
+    padding: 1.25rem 0;
+    text-align: left;
+    transition: color 0.2s ease, background-color 0.2s ease, padding 0.2s ease;
+    width: 100%;
+  }
+  .answer-transcript__number {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding-top: 0.35rem;
+  }
+  .answer-transcript__text {
+    color: inherit;
+  }
+  .answer-transcript__paragraph:hover,
+  .answer-transcript__paragraph:focus-visible,
+  .answer-transcript__paragraph.is-active {
+    background: rgba(0, 0, 0, 0.02);
+    color: var(--color-ink);
+    outline: 0;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .answer-transcript__paragraph.is-active {
+    border-bottom-color: var(--color-accent);
+  }
+  .answer-transcript__paragraph.is-active .answer-transcript__number {
+    color: var(--color-accent);
+  }
+  @media (max-width: 36rem) {
+    .answer-transcript__paragraph {
+      grid-template-columns: 1.5rem minmax(0, 1fr);
+      gap: 0.75rem;
+    }
+  }
+</style>

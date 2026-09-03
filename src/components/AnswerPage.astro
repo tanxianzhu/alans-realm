@@ -1,0 +1,172 @@
+---
+import { howToLearnGameRulesAnswer } from '../data/answers/how-to-learn-game-rules';
+import AnswerAudioPlayer from './answer/AnswerAudioPlayer.astro';
+import AnswerTranscript from './answer/AnswerTranscript.astro';
+---
+
+<article class="answer-page" data-answer-page>
+  <header class="answer-page__hero answer-shell">
+    <p class="answer-page__eyebrow">Alan's Economics Commons <span aria-hidden="true">/</span> Q&A Answer</p>
+    <h1>{howToLearnGameRulesAnswer.question}</h1>
+    <p class="answer-page__byline">{howToLearnGameRulesAnswer.speaker}</p>
+  </header>
+
+  <section class="answer-page__question answer-shell" aria-labelledby="question-label">
+    <div class="answer-page__question-card">
+      <p class="answer-page__question-label" id="question-label">The question</p>
+      <div class="answer-page__question-body">
+        <span class="answer-page__asker-avatar" aria-hidden="true">{howToLearnGameRulesAnswer.asker.charAt(0)}</span>
+        <div>
+          <p class="answer-page__asker-name">{howToLearnGameRulesAnswer.asker}</p>
+          <p class="answer-page__question-text">{howToLearnGameRulesAnswer.question}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="answer-page__audio answer-shell" aria-label="Audio recording of Alan's answer">
+    <AnswerAudioPlayer
+      src={howToLearnGameRulesAnswer.audioSrc}
+      type={howToLearnGameRulesAnswer.audioType}
+      title={howToLearnGameRulesAnswer.question}
+    />
+  </section>
+
+  <div class="answer-shell">
+    <AnswerTranscript transcript={howToLearnGameRulesAnswer.transcript} />
+  </div>
+</article>
+
+<style>
+  .answer-shell {
+    margin: 0 auto;
+    width: min(56rem, calc(100% - 3rem));
+  }
+  .answer-page__hero {
+    padding: clamp(4rem, 9vw, 7rem) 0 clamp(2.5rem, 5vw, 4rem);
+  }
+  .answer-page__eyebrow {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    letter-spacing: 0.14em;
+    margin: 0 0 1.15rem;
+    text-transform: uppercase;
+  }
+  .answer-page__eyebrow span {
+    color: var(--color-accent);
+    padding: 0 0.35rem;
+  }
+  .answer-page h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 6.5vw, 5rem);
+    font-weight: 400;
+    letter-spacing: -0.05em;
+    line-height: 0.95;
+    margin: 0;
+    max-width: 14ch;
+  }
+  .answer-page__byline {
+    color: var(--color-muted);
+    font-family: var(--font-display);
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    margin: 1.4rem 0 0;
+  }
+
+  .answer-page__question {
+    padding-bottom: clamp(2rem, 4vw, 3rem);
+  }
+  .answer-page__question-card {
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: 1rem;
+    padding: 1.5rem 1.75rem;
+  }
+  .answer-page__question-label {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    margin: 0 0 1rem;
+    text-transform: uppercase;
+  }
+  .answer-page__question-body {
+    align-items: start;
+    display: flex;
+    gap: 1rem;
+  }
+  .answer-page__asker-avatar {
+    align-items: center;
+    background: var(--color-ink);
+    border-radius: 50%;
+    color: var(--color-paper);
+    display: flex;
+    flex-shrink: 0;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    height: 2.5rem;
+    justify-content: center;
+    width: 2.5rem;
+  }
+  .answer-page__asker-name {
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin: 0 0 0.3rem;
+    text-transform: uppercase;
+  }
+  .answer-page__question-text {
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    line-height: 1.4;
+    margin: 0;
+  }
+
+  .answer-page__audio {
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  @media (max-width: 36rem) {
+    .answer-shell { width: min(100% - 2rem, 56rem); }
+    .answer-page__question-card { padding: 1.15rem; }
+  }
+</style>
+
+<script>
+  const page = document.querySelector('[data-answer-page]');
+  if (page) {
+    const audio = page.querySelector('[data-answer-audio-element]') as HTMLAudioElement;
+    const transcriptButtons = Array.from(page.querySelectorAll<HTMLButtonElement>('[data-transcript-start]'));
+    let activeButton: HTMLButtonElement | null = null;
+
+    const syncTranscript = (time: number) => {
+      transcriptButtons.forEach((button) => {
+        const start = Number(button.dataset.transcriptStart);
+        const end = Number(button.dataset.transcriptEnd);
+        const isActive = time >= start && time < end;
+        button.classList.toggle('is-active', isActive);
+        if (isActive && activeButton !== button) {
+          activeButton = button;
+        }
+      });
+    };
+
+    if (audio) {
+      audio.addEventListener('timeupdate', () => syncTranscript(audio.currentTime || 0));
+      audio.addEventListener('seeked', () => syncTranscript(audio.currentTime || 0));
+      audio.addEventListener('loadedmetadata', () => syncTranscript(0));
+    }
+
+    transcriptButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        if (audio) {
+          audio.currentTime = Number(button.dataset.transcriptStart);
+          syncTranscript(audio.currentTime);
+        }
+      });
+    });
+  }
+</script>

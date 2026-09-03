@@ -1,0 +1,244 @@
+---
+import { withBase } from '../../lib/path';
+
+interface Props {
+  src: string;
+  type?: string;
+  title?: string;
+}
+
+const { src, type = 'audio/mpeg', title = 'Audio playback' } = Astro.props;
+const speeds = [0.75, 1, 1.25, 1.5, 2];
+---
+
+<section class="answer-audio" aria-label={title} data-answer-audio>
+  <audio preload="metadata" data-answer-audio-element>
+    <source src={withBase(src)} type={type} />
+    Your browser does not support audio playback.
+  </audio>
+
+  <div class="answer-audio__row">
+    <button class="answer-audio__play" type="button" data-answer-audio-play aria-label="Play or pause">
+      <span data-answer-audio-play-icon>Play</span>
+    </button>
+
+    <div class="answer-audio__time">
+      <span data-answer-audio-current>0:00</span>
+      <span class="answer-audio__time-sep" aria-hidden="true">/</span>
+      <span data-answer-audio-duration>0:00</span>
+    </div>
+
+    <div class="answer-audio__speeds" role="group" aria-label="Playback speed">
+      {speeds.map((speed) => (
+        <button
+          type="button"
+          class="answer-audio__speed"
+          data-answer-audio-speed
+          data-speed={speed}
+          aria-pressed={speed === 1 ? 'true' : 'false'}
+        >
+          {speed}×
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <input
+    class="answer-audio__seek"
+    type="range"
+    min="0"
+    max="0"
+    value="0"
+    step="0.1"
+    aria-label="Seek through the audio"
+    data-answer-audio-seek
+  />
+</section>
+
+<style>
+  .answer-audio {
+    border: 1px solid var(--color-line);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--color-paper);
+  }
+  .answer-audio__row {
+    align-items: center;
+    display: flex;
+    gap: 1.25rem;
+  }
+  .answer-audio__play {
+    background: var(--color-ink);
+    border: 0;
+    border-radius: 999px;
+    color: var(--color-paper);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    min-width: 4.5rem;
+    padding: 0.75rem 1.25rem;
+    text-transform: uppercase;
+    transition: background 0.2s ease, transform 0.15s ease;
+  }
+  .answer-audio__play:hover,
+  .answer-audio__play:focus-visible {
+    background: var(--color-accent);
+    outline: 0;
+  }
+  .answer-audio__play:active {
+    transform: scale(0.97);
+  }
+  .answer-audio__time {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .answer-audio__time-sep {
+    margin: 0 0.35rem;
+    opacity: 0.5;
+  }
+  .answer-audio__speeds {
+    display: flex;
+    gap: 0.35rem;
+    margin-left: auto;
+  }
+  .answer-audio__speed {
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    color: var(--color-muted);
+    cursor: pointer;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 0.4rem 0.7rem;
+    transition: all 0.18s ease;
+  }
+  .answer-audio__speed:hover,
+  .answer-audio__speed:focus-visible {
+    border-color: var(--color-ink);
+    color: var(--color-ink);
+    outline: 0;
+  }
+  .answer-audio__speed[aria-pressed='true'] {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-paper);
+  }
+  .answer-audio__seek {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    display: block;
+    margin: 1rem 0 0;
+    width: 100%;
+  }
+  .answer-audio__seek::-webkit-slider-runnable-track {
+    background: var(--color-line);
+    border-radius: 999px;
+    height: 4px;
+  }
+  .answer-audio__seek::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--color-ink);
+    border-radius: 50%;
+    height: 14px;
+    margin-top: -5px;
+    width: 14px;
+  }
+  .answer-audio__seek::-moz-range-track {
+    background: var(--color-line);
+    border-radius: 999px;
+    height: 4px;
+  }
+  .answer-audio__seek::-moz-range-thumb {
+    background: var(--color-ink);
+    border: 0;
+    border-radius: 50%;
+    height: 14px;
+    width: 14px;
+  }
+  @media (max-width: 42rem) {
+    .answer-audio { padding: 1rem; }
+    .answer-audio__row { flex-wrap: wrap; gap: 0.75rem; }
+    .answer-audio__speeds { margin-left: 0; width: 100%; flex-wrap: wrap; }
+  }
+</style>
+
+<script>
+  const root = document.querySelector('[data-answer-audio]');
+  if (root) {
+    const audio = root.querySelector('[data-answer-audio-element]') as HTMLAudioElement;
+    const playButton = root.querySelector('[data-answer-audio-play]') as HTMLButtonElement;
+    const playIcon = root.querySelector('[data-answer-audio-play-icon]') as HTMLElement;
+    const current = root.querySelector('[data-answer-audio-current]') as HTMLElement;
+    const duration = root.querySelector('[data-answer-audio-duration]') as HTMLElement;
+    const seek = root.querySelector('[data-answer-audio-seek]') as HTMLInputElement;
+    const speedButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-answer-audio-speed]'));
+
+    const formatTime = (seconds: number) => {
+      if (!Number.isFinite(seconds)) return '0:00';
+      const minutes = Math.floor(seconds / 60);
+      const remaining = Math.floor(seconds % 60).toString().padStart(2, '0');
+      return `${minutes}:${remaining}`;
+    };
+
+    const sync = () => {
+      const time = audio.currentTime || 0;
+      current.textContent = formatTime(time);
+      seek.value = String(time);
+    };
+
+    audio.addEventListener('loadedmetadata', () => {
+      seek.max = String(audio.duration);
+      duration.textContent = formatTime(audio.duration);
+      sync();
+    });
+    audio.addEventListener('timeupdate', sync);
+    audio.addEventListener('seeked', sync);
+    audio.addEventListener('play', () => { playIcon.textContent = 'Pause'; });
+    audio.addEventListener('pause', () => { playIcon.textContent = 'Play'; });
+    audio.addEventListener('ended', () => { playIcon.textContent = 'Play'; });
+
+    playButton.addEventListener('click', () => {
+      audio.paused ? audio.play() : audio.pause();
+    });
+
+    seek.addEventListener('input', () => {
+      audio.currentTime = Number(seek.value);
+      sync();
+    });
+
+    speedButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const speed = Number(button.dataset.speed);
+        audio.playbackRate = speed;
+        speedButtons.forEach((b) => b.setAttribute('aria-pressed', b === button ? 'true' : 'false'));
+      });
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.matches('input, textarea, select, button, a')) return;
+      if (event.code === 'Space') {
+        event.preventDefault();
+        audio.paused ? audio.play() : audio.pause();
+      }
+      if (event.key === 'ArrowLeft') {
+        audio.currentTime = Math.max(0, audio.currentTime - 5);
+        sync();
+      }
+      if (event.key === 'ArrowRight') {
+        audio.currentTime = Math.min(audio.duration || Infinity, audio.currentTime + 5);
+        sync();
+      }
+    });
+  }
+</script>
