@@ -1,13 +1,54 @@
 ---
+import { withBase } from '../lib/path';
 import BaseLayout from './BaseLayout.astro';
-interface Props { title: string; introduction: string; section: string; }
-const { title, introduction, section } = Astro.props;
+interface Props {
+  title: string;
+  introduction: string;
+  section: string;
+  heroImage?: string;
+  heroImageAlt?: string;
+}
+const { title, introduction, section, heroImage, heroImageAlt = '' } = Astro.props;
 ---
 <BaseLayout title={`${title} — Alan's Realm`} description={introduction} currentSection={section}>
-  <section class="site-shell page-intro">
-    <p class="page-intro__eyebrow">Alan's Realm · {section}</p>
-    <h1>{title}</h1>
-    <p>{introduction}</p>
+  <section class:list={['site-shell', 'page-intro', heroImage && 'page-intro--with-image']}>
+    <div class="page-intro__text">
+      <p class="page-intro__eyebrow">Alan's Realm · {section}</p>
+      <h1>{title}</h1>
+      <p>{introduction}</p>
+    </div>
+    {heroImage && (
+      <div class="page-intro__hero">
+        <img src={withBase(heroImage)} alt={heroImageAlt} loading="eager" />
+      </div>
+    )}
   </section>
   <section class="site-shell"><slot /></section>
 </BaseLayout>
+
+<style>
+  .page-intro--with-image {
+    align-items: center;
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .page-intro__hero {
+    max-width: clamp(13rem, 30vw, 24rem);
+  }
+  .page-intro__hero img {
+    display: block;
+    height: auto;
+    width: 100%;
+  }
+  @media (max-width: 48rem) {
+    .page-intro--with-image {
+      grid-template-columns: 1fr;
+    }
+    .page-intro__hero {
+      margin: 0 auto;
+      max-width: clamp(10rem, 55vw, 17rem);
+      order: -1;
+    }
+  }
+</style>
