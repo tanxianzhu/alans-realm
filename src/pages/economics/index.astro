@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../../lib/path';
 import { getCollection } from 'astro:content';
 import SectionLayout from '../../layouts/SectionLayout.astro';
 import CourseCard from '../../components/CourseCard.astro';
@@ -11,7 +12,7 @@ const lessonLabels: Record<number, string> = { 1: 'L1', 2: 'L2', 3: 'L3', 4: 'L4
       const slug = lesson.id.replace(/^economics\//, '').replace(/\.mdx$/, '');
       return <CourseCard number={lessonLabels[lesson.data.order] ?? `L${lesson.data.order}`} title={lesson.data.title} description={lesson.data.description} href={`/economics/${slug}/`} />;
     })}
-    <a class="qa-link" href="/economics/q-and-a/">Q&A Session <span aria-hidden="true">→</span></a>
+    <a class="qa-link" href={withBase('/economics/q-and-a/')}>Q&A Session <span aria-hidden="true">→</span></a>
   </div>
 </SectionLayout>
 <style>

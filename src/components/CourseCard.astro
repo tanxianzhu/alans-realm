@@ -1,8 +1,9 @@
 ---
+import { withBase } from '../lib/path';
 interface Props { number: string; title: string; description?: string; href?: string; status?: string; }
 const { number, title, description, href, status } = Astro.props;
 ---
-{href ? <a class="lesson-row" href={href}> <span>{number}</span><span><strong>{title}</strong>{description && <small>{description}</small>}</span><span>Read →</span></a> : <div class="lesson-row lesson-row--muted"><span>{number}</span><span><strong>{title}</strong>{description && <small>{description}</small>}</span><span>{status ?? 'Coming soon.'}</span></div>}
+{href ? <a class="lesson-row" href={withBase(href)}> <span>{number}</span><span><strong>{title}</strong>{description && <small>{description}</small>}</span><span>Read →</span></a> : <div class="lesson-row lesson-row--muted"><span>{number}</span><span><strong>{title}</strong>{description && <small>{description}</small>}</span><span>{status ?? 'Coming soon.'}</span></div>}
 <style>
   .lesson-row { align-items: baseline; border-bottom: 1px solid var(--color-line); color: var(--color-ink); display: grid; font-size: var(--size-sm); gap: var(--space-2); grid-template-columns: 4rem 1fr auto; padding: clamp(1.6rem, 3vw, 2.5rem) 0; text-decoration: none; transition: padding .24s ease, background-color .24s ease; }
   .lesson-row:hover { background: color-mix(in srgb, var(--color-wash) 52%, transparent); padding-left: .8rem; padding-right: .8rem; }

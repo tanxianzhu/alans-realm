@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../lib/path';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SectionHero from '../components/SectionHero.astro';
 const realms = [
@@ -10,7 +11,7 @@ const realms = [
 ---
 <BaseLayout isHome>
   <section class="home-intro">
-    <img class="home-intro__image" src="/images/home-hero.jpg" alt="Alan standing on a hillside above a forest" />
+    <img class="home-intro__image" src={withBase('/images/home-hero.jpg')} alt="Alan standing on a hillside above a forest" />
     <div class="home-intro__shade" aria-hidden="true"></div>
     <div class="home-intro__content site-shell">
       <h1>Alan's Realm</h1>

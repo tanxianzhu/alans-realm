@@ -1,10 +1,11 @@
 ---
+import { withBase } from '../lib/path';
 interface Props { src: string; title?: string; }
 const { src, title = "Listen to Alan's explanation" } = Astro.props;
 ---
 <section class="audio-player" aria-label={title}>
   <p>{title}</p>
-  <audio controls preload="metadata"><source src={src} type="audio/mpeg" />Your browser does not support audio playback.</audio>
+  <audio controls preload="metadata"><source src={withBase(src)} type="audio/mpeg" />Your browser does not support audio playback.</audio>
 </section>
 <style>
   .audio-player { border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); margin: var(--space-4) 0; padding: var(--space-2) 0; }

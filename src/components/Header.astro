@@ -1,14 +1,15 @@
 ---
+import { withBase } from '../lib/path';
 const { currentSection, isHome = false } = Astro.props;
 ---
 <header class:list={['header', isHome && 'header--home']}>
   <div class="header__inner site-shell">
-    <a class="brand" href="/">Homepage</a>
+    <a class="brand" href={withBase('/')}>Homepage</a>
     <nav aria-label="Main navigation">
-      <a class:list={[currentSection === 'english' && 'active']} href="/english/">English Corner</a>
-      <a class:list={[currentSection === 'economics' && 'active']} href="/economics/">Economics</a>
-      <a class:list={[currentSection === 'art' && 'active']} href="/art/">Art</a>
-      <a class:list={[currentSection === 'wonder' && 'active']} href="/wonder/">Fields of Wonder</a>
+      <a class:list={[currentSection === 'english' && 'active']} href={withBase('/english/')}>English Corner</a>
+      <a class:list={[currentSection === 'economics' && 'active']} href={withBase('/economics/')}>Economics</a>
+      <a class:list={[currentSection === 'art' && 'active']} href={withBase('/art/')}>Art</a>
+      <a class:list={[currentSection === 'wonder' && 'active']} href={withBase('/wonder/')}>Fields of Wonder</a>
     </nav>
   </div>
 </header>

@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../../lib/path';
 interface Props {
   src: string;
   type: string;
@@ -10,7 +11,7 @@ const { src, type, title } = Astro.props;
 
 <section class="speech-audio" aria-label="Audio player" data-speech-player>
   <audio preload="metadata" data-speech-audio>
-    <source src={src} type={type} />
+    <source src={withBase(src)} type={type} />
     Your browser does not support audio playback.
   </audio>
   <div class="speech-audio__topline">

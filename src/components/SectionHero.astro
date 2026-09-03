@@ -1,11 +1,12 @@
 ---
+import { withBase } from '../lib/path';
 interface Props { number: string; label: string; title: string; subtitle?: string; href: string; image: string; imagePosition?: string; }
 const { number, label, title, subtitle, href, image, imagePosition = 'center' } = Astro.props;
 const titleLines = title.split('\n');
 ---
-<section class="realm" style={`--realm-image: url('${image}'); --realm-position: ${imagePosition};`}>
+<section class="realm" style={`--realm-image: url('${withBase(image)}'); --realm-position: ${imagePosition};`}>
   <span class="realm__number">{number} · {label}</span>
-  <a class="realm__title" href={href}>
+  <a class="realm__title" href={withBase(href)}>
     {titleLines.map((line) => <span class="realm__title-line">{line}</span>)}
     {subtitle && <span class="realm__subtitle">{subtitle}</span>}
   </a>

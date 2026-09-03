@@ -1,9 +1,10 @@
 ---
+import { withBase } from '../lib/path';
 interface Props { src: string; alt: string; caption?: string; placement?: 'standard' | 'portrait' | 'inset' | 'float-right' | 'float-left'; }
 const { src, alt, caption, placement = 'standard' } = Astro.props;
 ---
 <figure class:list={[`figure--${placement}`]}>
-  <img src={src} alt={alt} loading="lazy" />
+  <img src={withBase(src)} alt={alt} loading="lazy" />
   {caption && <figcaption>{caption}</figcaption>}
 </figure>
 <style>
