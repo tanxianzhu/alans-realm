@@ -1,0 +1,46 @@
+<form class="qa-letter" data-letter-form data-private="false">
+  <header class="qa-letter__heading">
+    <p>Alan’s Economics Commons</p>
+    <h3>Raise a Question</h3>
+  </header>
+  <label>
+    <span>Your name</span>
+    <input name="name" autocomplete="name" required />
+  </label>
+  <label>
+    <span>Question</span>
+    <textarea name="question" rows="4" required></textarea>
+  </label>
+  <label>
+    <span>Group <em>optional</em></span>
+    <input name="group" />
+  </label>
+  <fieldset>
+    <legend>Visibility</legend>
+    <label><input type="radio" name="visibility" value="public" checked /> Public</label>
+    <label><input type="radio" name="visibility" value="private" /> Private</label>
+  </fieldset>
+  <span class="qa-letter__private-mark" aria-hidden="true">⌑</span>
+  <label class="qa-letter__passcode" data-passcode-field aria-hidden="true">
+    <span>Viewing Passcode</span>
+    <input name="passcode" type="password" autocomplete="new-password" />
+  </label>
+  <label>
+    <span>Note <em>optional</em></span>
+    <input name="note" />
+  </label>
+  <button type="submit" data-send-letter>Seal &amp; Send <span aria-hidden="true">→</span></button>
+  <button class="qa-letter__close" type="button" data-close-letter>Fold away <span aria-hidden="true">×</span></button>
+</form>
+
+<div class="qa-letter__message qa-letter__message--success" data-letter-success hidden aria-live="polite">
+  <p>Great! We’ve received your message.</p>
+  <span>Alan will get your message soon. 📨</span>
+  <button type="button" data-new-letter>Write another letter →</button>
+</div>
+
+<div class="qa-letter__message qa-letter__message--error" data-letter-error hidden aria-live="polite">
+  <p>The owl seems to have lost its way.</p>
+  <span data-letter-error-copy>Your letter hasn’t been sent yet.</span>
+  <button type="button" data-try-again>Try again →</button>
+</div>

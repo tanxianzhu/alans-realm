@@ -1,0 +1,29 @@
+---
+import type { EconomicsQuestion } from '../../data/economics-qa';
+
+interface Props {
+  question: EconomicsQuestion;
+  number: number;
+}
+
+const { question, number } = Astro.props;
+const href = question.id === 'remember-rules' ? '/economics/speeches/game-rules/' : undefined;
+---
+
+<li class="qa-question-row">
+  {href ? (
+    <a class="qa-question-row__content qa-question-row__link" href={href} aria-label={`Listen to Alan's answer: ${question.text}`}>
+      <span class="qa-question-row__number">{String(number).padStart(3, '0')}</span>
+      <span class="qa-question-row__name">{question.asker}</span>
+      <span class="qa-question-row__text">{question.text}</span>
+      <span class="qa-question-row__arrow" aria-hidden="true">→</span>
+    </a>
+  ) : (
+    <span class="qa-question-row__content">
+      <span class="qa-question-row__number">{String(number).padStart(3, '0')}</span>
+      <span class="qa-question-row__name">{question.asker}</span>
+      <span class="qa-question-row__text">{question.text}</span>
+      <span class="qa-question-row__arrow" aria-hidden="true">→</span>
+    </span>
+  )}
+</li>

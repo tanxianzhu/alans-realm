@@ -1,0 +1,179 @@
+---
+import '../styles/speech.css';
+import { gameRulesSpeech } from '../data/speeches/game-rules';
+import PresentationCanvas from './speech/PresentationCanvas.astro';
+import AudioPlayer from './speech/AudioPlayer.astro';
+import Transcript from './speech/Transcript.astro';
+---
+
+<article class="speech-presentation" data-speech-presentation>
+  <header class="speech-presentation__hero speech-shell">
+    <p class="speech-presentation__eyebrow">Economics Commons <span aria-hidden="true">/</span> Speech 01</p>
+    <h1>{gameRulesSpeech.title}</h1>
+    <p class="speech-presentation__byline">{gameRulesSpeech.speaker}</p>
+  </header>
+
+  <div class="speech-shell speech-presentation__experience">
+    <PresentationCanvas label="Visual thinking map for the speech" />
+    <AudioPlayer src={gameRulesSpeech.audioSrc} type={gameRulesSpeech.audioType} title={gameRulesSpeech.title} />
+  </div>
+
+  <div class="speech-shell">
+    <Transcript transcript={gameRulesSpeech.transcript} />
+  </div>
+</article>
+
+<script>
+  import { gameRulesSpeech, findSpeechScene } from '../data/speeches/game-rules';
+
+  const root = document.querySelector('[data-speech-presentation]');
+  if (root) {
+    const audio = root.querySelector('[data-speech-audio]') as HTMLAudioElement;
+    const player = root.querySelector('[data-speech-player]') as HTMLElement;
+    const seek = root.querySelector('[data-audio-seek]') as HTMLInputElement;
+    const playButton = root.querySelector('[data-audio-play]') as HTMLButtonElement;
+    const playSymbol = root.querySelector('[data-play-symbol]') as HTMLElement;
+    const current = root.querySelector('[data-audio-current]') as HTMLElement;
+    const duration = root.querySelector('[data-audio-duration]') as HTMLElement;
+    const volume = root.querySelector('[data-audio-volume]') as HTMLInputElement;
+    const mute = root.querySelector('[data-audio-mute]') as HTMLButtonElement;
+    const speed = root.querySelector('[data-audio-speed]') as HTMLSelectElement;
+    const mapIndex = root.querySelector('[data-map-index]') as HTMLElement;
+    const mapChapter = root.querySelector('[data-map-chapter]') as HTMLElement;
+    const mapTitle = root.querySelector('[data-map-title]') as HTMLElement;
+    const nodesLayer = root.querySelector('[data-map-nodes]') as HTMLElement;
+    const edgesLayer = root.querySelector('[data-map-edges]') as SVGElement;
+    const transcriptButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-transcript-start]'));
+    const nodeElements = new Map<string, HTMLElement>();
+    const edgeElements = new Map<string, SVGLineElement>();
+    let activeSceneId = '';
+    const compactPositions: Record<string, Record<string, [number, number]>> = {
+      elements: {
+        learning: [50, 13], goal: [20, 40], resources: [50, 40], actions: [80, 40], effects: [35, 75], constraints: [68, 75],
+      },
+      resources: {
+        resources: [50, 14], king: [20, 45], queen: [50, 45], rooks: [80, 45], knights: [35, 77], pawns: [65, 77],
+      },
+      remembering: {
+        learning: [16, 30], remembering: [53, 18], simple: [20, 69], teach: [50, 69], humble: [80, 69],
+      },
+      frisbee: {
+        beginner: [18, 28], mistakes: [50, 28], guilty: [82, 28], captain: [34, 72], score: [67, 72],
+      },
+    };
+
+    const formatTime = (seconds: number) => {
+      if (!Number.isFinite(seconds)) return '0:00';
+      const minutes = Math.floor(seconds / 60);
+      const remaining = Math.floor(seconds % 60).toString().padStart(2, '0');
+      return `${minutes}:${remaining}`;
+    };
+
+    const renderScene = (time: number, force = false) => {
+      const scene = findSpeechScene(time);
+      if (!force && scene.id === activeSceneId) return;
+      activeSceneId = scene.id;
+      mapIndex.textContent = String(scene.index).padStart(2, '0');
+      mapChapter.textContent = scene.chapter;
+      mapTitle.textContent = scene.title;
+      const isCompact = window.matchMedia('(max-width: 46rem)').matches;
+      const positionedNodes = scene.nodes.map((node) => {
+        const position = isCompact ? compactPositions[scene.id]?.[node.id] : undefined;
+        return position ? { ...node, x: position[0], y: position[1] } : node;
+      });
+      const nextNodes = new Map(positionedNodes.map((node) => [node.id, node]));
+
+      nodeElements.forEach((element, id) => element.classList.toggle('is-hidden', !nextNodes.has(id)));
+      positionedNodes.forEach((node) => {
+        let element = nodeElements.get(node.id);
+        if (!element) {
+          element = document.createElement('div');
+          element.className = 'speech-map__node is-hidden';
+          nodesLayer.append(element);
+          nodeElements.set(node.id, element);
+          requestAnimationFrame(() => element?.classList.remove('is-hidden'));
+        } else {
+          element.classList.remove('is-hidden');
+        }
+        element.dataset.size = node.size || 'medium';
+        element.dataset.tone = node.tone || 'default';
+        element.style.left = `${node.x}%`;
+        element.style.top = `${node.y}%`;
+        element.innerHTML = `<strong>${node.label}</strong>${node.detail ? `<small>${node.detail}</small>` : ''}`;
+      });
+
+      const activeEdges = new Set(scene.edges.map((edge) => `${edge.from}:${edge.to}`));
+      edgeElements.forEach((element, key) => element.classList.toggle('is-hidden', !activeEdges.has(key)));
+      scene.edges.forEach((edge) => {
+        const key = `${edge.from}:${edge.to}`;
+        let line = edgeElements.get(key);
+        if (!line) {
+          line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.classList.add('speech-map__edge');
+          edgesLayer.append(line);
+          edgeElements.set(key, line);
+        }
+        const from = nextNodes.get(edge.from);
+        const to = nextNodes.get(edge.to);
+        if (from && to) {
+          line.setAttribute('x1', String(from.x));
+          line.setAttribute('y1', String(from.y));
+          line.setAttribute('x2', String(to.x));
+          line.setAttribute('y2', String(to.y));
+        }
+        line.classList.remove('is-hidden');
+      });
+    };
+
+    const syncTranscript = (time: number) => {
+      transcriptButtons.forEach((button) => {
+        const start = Number(button.dataset.transcriptStart);
+        const end = Number(button.dataset.transcriptEnd);
+        button.classList.toggle('is-active', time >= start && time < end);
+      });
+    };
+
+    const sync = (force = false) => {
+      const time = audio.currentTime || 0;
+      current.textContent = formatTime(time);
+      seek.value = String(time);
+      renderScene(time, force);
+      syncTranscript(time);
+    };
+
+    audio.addEventListener('loadedmetadata', () => {
+      seek.max = String(audio.duration);
+      duration.textContent = formatTime(audio.duration);
+      sync(true);
+    });
+    audio.addEventListener('timeupdate', () => sync());
+    audio.addEventListener('seeked', () => sync(true));
+    audio.addEventListener('play', () => { player.dataset.playing = 'true'; playSymbol.textContent = 'Pause'; });
+    audio.addEventListener('pause', () => { player.dataset.playing = 'false'; playSymbol.textContent = 'Play'; });
+    audio.addEventListener('ended', () => sync(true));
+
+    playButton.addEventListener('click', () => audio.paused ? audio.play() : audio.pause());
+    seek.addEventListener('input', () => { audio.currentTime = Number(seek.value); sync(true); });
+    volume.addEventListener('input', () => { audio.volume = Number(volume.value); audio.muted = false; });
+    mute.addEventListener('click', () => { audio.muted = !audio.muted; });
+    audio.addEventListener('volumechange', () => {
+      volume.value = String(audio.volume);
+      mute.textContent = audio.muted || audio.volume === 0 ? 'Unmute' : 'Mute';
+    });
+    speed.addEventListener('change', () => { audio.playbackRate = Number(speed.value); });
+    transcriptButtons.forEach((button) => button.addEventListener('click', () => {
+      audio.currentTime = Number(button.dataset.transcriptStart);
+      sync(true);
+    }));
+    document.addEventListener('keydown', (event) => {
+      const target = event.target as HTMLElement | null;
+      if (target?.matches('input, textarea, select, button, a')) return;
+      if (event.code === 'Space') { event.preventDefault(); audio.paused ? audio.play() : audio.pause(); }
+      if (event.key === 'ArrowLeft') { audio.currentTime = Math.max(0, audio.currentTime - 5); sync(true); }
+      if (event.key === 'ArrowRight') { audio.currentTime = Math.min(audio.duration || Infinity, audio.currentTime + 5); sync(true); }
+    });
+    window.addEventListener('resize', () => renderScene(audio.currentTime || 0, true));
+    renderScene(0, true);
+    syncTranscript(0);
+  }
+</script>

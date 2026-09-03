@@ -1,0 +1,10 @@
+---
+import SectionLayout from '../../layouts/SectionLayout.astro';
+import CourseCard from '../../components/CourseCard.astro';
+const topics = ['Position', 'Shape', 'Color', 'Light & Shadow'];
+---
+<SectionLayout title="Alan's Art Workshop" introduction="Learn to see before learning to draw." section="art">
+  <div class="topic-group"><p>Realism</p>{topics.map((title, index) => <CourseCard number={String(index + 1).padStart(2, '0')} title={title} status="Coming soon." />)}</div>
+  <div class="topic-group"><p>Expression</p><CourseCard number="—" title="Future lessons" status="Coming soon." /></div>
+</SectionLayout>
+<style>.topic-group { padding: var(--space-4) 0 var(--space-5); }.topic-group > p { font-family: var(--font-display); font-size: var(--size-lg); margin-bottom: var(--space-1); }</style>

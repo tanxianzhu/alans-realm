@@ -1,0 +1,21 @@
+---
+import { getCollection } from 'astro:content';
+import SectionLayout from '../../layouts/SectionLayout.astro';
+import CourseCard from '../../components/CourseCard.astro';
+const lessons = (await getCollection('lessons', ({ data }) => data.section === 'economics')).sort((a, b) => a.data.order - b.data.order);
+const lessonLabels: Record<number, string> = { 1: 'L1', 2: 'L2', 3: 'L3', 4: 'L4&5' };
+---
+<SectionLayout title="Alan's Economics Commons" introduction="Economics is a subject about making choices." section="economics">
+  <div class="lesson-list">
+    {lessons.map((lesson) => {
+      const slug = lesson.id.replace(/^economics\//, '').replace(/\.mdx$/, '');
+      return <CourseCard number={lessonLabels[lesson.data.order] ?? `L${lesson.data.order}`} title={lesson.data.title} description={lesson.data.description} href={`/economics/${slug}/`} />;
+    })}
+    <a class="qa-link" href="/economics/q-and-a/">Q&A Session <span aria-hidden="true">→</span></a>
+  </div>
+</SectionLayout>
+<style>
+  .lesson-list { padding-bottom: var(--space-6); }
+  .qa-link { color: var(--color-ink); display: inline-flex; font-family: var(--font-display); font-size: clamp(1.45rem, 3vw, 2rem); gap: .65rem; margin-top: var(--space-4); text-decoration: none; }
+  .qa-link:hover { color: var(--color-accent); }
+</style>

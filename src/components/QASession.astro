@@ -1,0 +1,228 @@
+---
+import type { EconomicsQuestion, QuestionGroup } from '../data/economics-qa';
+
+interface Props {
+  questions: EconomicsQuestion[];
+  groups: QuestionGroup[];
+  source: 'feishu' | 'local';
+}
+
+const { questions, groups, source } = Astro.props;
+const askers = [...new Set(questions.map((question) => question.asker))];
+---
+
+<section class="qa-session" data-qa-session>
+  <header class="qa-session__header">
+    <p class="qa-session__eyebrow">Economics Commons · Question Index</p>
+    <div class="qa-session__heading-row">
+      <h2>{questions.length} questions</h2>
+      <p class:list={{ 'qa-session__source': true, 'is-live': source === 'feishu' }}>
+        {source === 'feishu' ? 'Feishu Bitable · public records' : 'Local reading copy'}
+      </p>
+    </div>
+  </header>
+  <div class="qa-session__tools" aria-label="Question controls">
+    <label class="qa-session__filter">
+      <span>Asked by</span>
+      <select data-qa-filter aria-label="Filter questions by asker">
+        <option value="all">All askers</option>
+        {askers.map((asker) => <option value={asker}>{asker}</option>)}
+      </select>
+    </label>
+    <div class="qa-session__actions">
+      <span class="qa-session__drag-note">Drag to reorder</span>
+      <button class="qa-session__new-group" type="button" data-qa-add-group>Add group</button>
+    </div>
+  </div>
+  <div class="qa-session__list" data-qa-list aria-live="polite"></div>
+  <script type="application/json" data-qa-data set:html={JSON.stringify({ questions, groups })}></script>
+</section>
+
+<style>
+  .qa-session { padding: clamp(3.5rem, 8vw, 6.5rem) 0 var(--space-6); }
+  .qa-session__header { border-bottom: 1px solid var(--color-ink); padding-bottom: var(--space-3); }
+  .qa-session__eyebrow, .qa-session__source, .qa-session__filter > span, .qa-session__drag-note { color: var(--color-muted); font-size: .68rem; letter-spacing: .13em; margin: 0; text-transform: uppercase; }
+  .qa-session__eyebrow { margin-bottom: .65rem; }
+  .qa-session__heading-row { align-items: baseline; display: flex; gap: var(--space-2); justify-content: space-between; }
+  .qa-session h2 { font-size: clamp(2.2rem, 5vw, 4.3rem); letter-spacing: -.045em; margin: 0; }
+  .qa-session__source { text-align: right; }
+  .qa-session__source.is-live { color: var(--color-accent); }
+  .qa-session__tools { align-items: end; border-bottom: 1px solid var(--color-line); display: flex; justify-content: space-between; padding: .85rem 0; }
+  .qa-session__filter { display: grid; gap: .35rem; }
+  select, button { background: transparent; border: 0; border-radius: 0; color: var(--color-ink); font: inherit; }
+  select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%); background-position: calc(100% - .5rem) .8rem, calc(100% - .2rem) .8rem; background-repeat: no-repeat; background-size: .3rem .3rem, .3rem .3rem; border-bottom: 1px solid var(--color-ink); font-size: var(--size-sm); min-width: 9rem; padding: .2rem 1.2rem .35rem 0; }
+  button { cursor: pointer; font-size: .68rem; letter-spacing: .13em; text-transform: uppercase; }
+  button:hover, button:focus-visible { color: var(--color-accent); text-decoration: underline; text-underline-offset: .3rem; }
+  .qa-session__actions { align-items: center; display: flex; gap: var(--space-2); }
+  .qa-session__list { display: grid; gap: clamp(2.6rem, 6vw, 5rem); padding-top: var(--space-4); }
+  @media (max-width: 32rem) { .qa-session__heading-row, .qa-session__tools { align-items: flex-start; flex-direction: column; } .qa-session__source { text-align: left; } .qa-session__actions { margin-top: .35rem; } }
+</style>
+
+<script>
+  const root = document.querySelector('[data-qa-session]');
+
+  if (root) {
+    const dataElement = root.querySelector('[data-qa-data]');
+    const initialData = JSON.parse(dataElement?.textContent || '{"questions":[],"groups":[]}');
+    let questions = initialData.questions.map((question) => ({ ...question }));
+    let groups = initialData.groups.map((group) => ({ ...group }));
+    let activeAsker = 'all';
+    let draggedId = null;
+    let displayNumbers = new Map();
+
+    const list = root.querySelector('[data-qa-list]');
+    const filter = root.querySelector('[data-qa-filter]');
+    const addGroupButton = root.querySelector('[data-qa-add-group]');
+
+    const currentQuestions = () => questions.filter((question) => activeAsker === 'all' || question.asker === activeAsker);
+
+    const addOption = (select, value, label, selected) => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = label;
+      option.selected = selected;
+      select.append(option);
+    };
+
+    const createQuestion = (question) => {
+      const item = document.createElement('article');
+      item.className = 'qa-question';
+      item.dataset.questionId = question.id;
+      item.draggable = true;
+
+      const number = document.createElement('span');
+      number.className = 'qa-question__number';
+      number.textContent = String(displayNumbers.get(question.id) || 0).padStart(2, '0');
+
+      const handle = document.createElement('span');
+      handle.className = 'qa-question__handle';
+      handle.setAttribute('aria-hidden', 'true');
+      handle.textContent = '↕';
+
+      const copy = document.createElement('p');
+      copy.className = 'qa-question__copy';
+      const asker = document.createElement('strong');
+      asker.textContent = `${question.asker}: `;
+      copy.append(asker, document.createTextNode(question.text));
+
+      const groupSelect = document.createElement('select');
+      groupSelect.className = 'qa-question__group-select';
+      groupSelect.setAttribute('aria-label', `Move ${question.asker}'s question to a group`);
+      addOption(groupSelect, '', 'No group', question.groupId === null);
+      groups.forEach((group) => addOption(groupSelect, group.id, group.name, question.groupId === group.id));
+      groupSelect.addEventListener('change', () => {
+        question.groupId = groupSelect.value || null;
+        questions = [...questions.filter((candidate) => candidate.id !== question.id), question];
+        render();
+      });
+
+      item.append(number, handle, copy, groupSelect);
+      item.addEventListener('dragstart', () => {
+        draggedId = question.id;
+        item.classList.add('is-dragging');
+      });
+      item.addEventListener('dragend', () => {
+        draggedId = null;
+        item.classList.remove('is-dragging');
+      });
+      return item;
+    };
+
+    const createCollection = (groupId, items) => {
+      const collection = document.createElement('div');
+      collection.className = groupId ? 'qa-group__questions' : 'qa-ungrouped';
+      collection.dataset.groupId = groupId || '';
+      items.forEach((question) => collection.append(createQuestion(question)));
+      collection.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        collection.classList.add('is-drop-target');
+      });
+      collection.addEventListener('dragleave', () => collection.classList.remove('is-drop-target'));
+      collection.addEventListener('drop', (event) => {
+        event.preventDefault();
+        collection.classList.remove('is-drop-target');
+        if (!draggedId) return;
+        const movingIndex = questions.findIndex((question) => question.id === draggedId);
+        const moving = questions[movingIndex];
+        if (!moving) return;
+        const dropTarget = event.target.closest('[data-question-id]');
+        const targetId = dropTarget?.dataset.questionId;
+        questions.splice(movingIndex, 1);
+        moving.groupId = groupId || null;
+        const targetIndex = targetId ? questions.findIndex((question) => question.id === targetId) : -1;
+        questions.splice(targetIndex === -1 ? questions.length : targetIndex, 0, moving);
+        render();
+      });
+      return collection;
+    };
+
+    const render = () => {
+      list.replaceChildren();
+      const visible = currentQuestions();
+      const groupOrder = [null, ...groups.map((group) => group.id)];
+      displayNumbers = new Map();
+      let displayIndex = 0;
+      groupOrder.forEach((groupId) => {
+        visible
+          .filter((question) => question.groupId === groupId)
+          .forEach((question) => displayNumbers.set(question.id, ++displayIndex));
+      });
+      groupOrder.forEach((groupId) => {
+        const groupQuestions = visible.filter((question) => question.groupId === groupId);
+        if (!groupQuestions.length) return;
+        if (!groupId) {
+          list.append(createCollection(null, groupQuestions));
+          return;
+        }
+        const group = groups.find((candidate) => candidate.id === groupId);
+        const section = document.createElement('section');
+        section.className = 'qa-group';
+        const heading = document.createElement('p');
+        heading.className = 'qa-group__title';
+        heading.textContent = group?.name || 'Group';
+        section.append(heading, createCollection(groupId, groupQuestions));
+        list.append(section);
+      });
+      if (!visible.length) {
+        const empty = document.createElement('p');
+        empty.className = 'qa-session__empty';
+        empty.textContent = 'No questions from this asker yet.';
+        list.append(empty);
+      }
+    };
+
+    filter?.addEventListener('change', () => {
+      activeAsker = filter.value;
+      render();
+    });
+
+    addGroupButton?.addEventListener('click', () => {
+      const name = window.prompt('Name this question group:')?.trim();
+      if (!name) return;
+      const id = `group-${Date.now()}`;
+      groups.push({ id, name });
+      render();
+    });
+
+    render();
+  }
+</script>
+
+<style is:global>
+  .qa-question { align-items: start; border-bottom: 1px solid var(--color-line); display: grid; gap: var(--space-2); grid-template-columns: 2.4rem 1rem minmax(0, 1fr) auto; padding: 1.35rem 0; transition: background-color .18s ease, padding .18s ease; }
+  .qa-question[draggable='true'] { cursor: grab; }
+  .qa-question:hover { background: rgba(63, 94, 79, .055); padding-left: .45rem; padding-right: .45rem; }
+  .qa-question.is-dragging { opacity: .3; }
+  .qa-question__number, .qa-question__handle { color: var(--color-muted); font-size: .7rem; padding-top: .4rem; }
+  .qa-question__handle { cursor: grab; font-size: 1rem; line-height: 1; }
+  .qa-question__copy { font-family: var(--font-body); font-size: clamp(1.05rem, 1.7vw, 1.32rem); letter-spacing: -.012em; line-height: 1.45; margin: 0; max-width: 50rem; }
+  .qa-question__copy strong { color: var(--color-accent); font-family: var(--font-display); font-size: 1.08em; font-weight: 400; }
+  .qa-question__group-select { align-self: start; border-bottom: 1px solid transparent; color: var(--color-muted); font-size: .68rem; margin-top: .18rem; min-width: 0; opacity: 0; padding-bottom: .15rem; transition: opacity .18s ease; }
+  .qa-question:hover .qa-question__group-select, .qa-question:focus-within .qa-question__group-select { opacity: 1; }
+  .qa-group { border-top: 1px solid var(--color-accent); padding-top: .65rem; }
+  .qa-group__title { color: var(--color-accent); font-size: .68rem; font-weight: 700; letter-spacing: .13em; margin: 0; padding: 0 0 .3rem; text-transform: uppercase; }
+  .qa-group__questions { border-left: 1px solid var(--color-line); padding-left: clamp(1rem, 3vw, 2.3rem); }
+  .qa-group__questions.is-drop-target, .qa-ungrouped.is-drop-target { background: rgba(63, 94, 79, .07); }
+  .qa-session__empty { color: var(--color-muted); font-family: var(--font-display); font-size: 1.2rem; }
+  @media (max-width: 42rem) { .qa-question { grid-template-columns: 1.75rem 1rem minmax(0, 1fr); } .qa-question__group-select { grid-column: 3; justify-self: start; opacity: 1; } .qa-group__questions { padding-left: var(--space-2); } }
+</style>

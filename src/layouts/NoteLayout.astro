@@ -1,0 +1,14 @@
+---
+import BaseLayout from './BaseLayout.astro';
+interface Props { title: string; description: string; section: string; }
+const { title, description, section } = Astro.props;
+---
+<BaseLayout title={`${title} — Alan's Realm`} description={description} currentSection={section}>
+  <article class="prose">
+    <p class="note-meta">Alan's {section === 'economics' ? 'Economics Commons' : section}</p>
+    <slot />
+  </article>
+</BaseLayout>
+<style>
+  .note-meta { color: var(--color-muted); font-size: var(--size-xs); letter-spacing: .1em; text-transform: uppercase; }
+</style>

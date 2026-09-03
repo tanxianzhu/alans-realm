@@ -1,0 +1,13 @@
+---
+import BaseLayout from './BaseLayout.astro';
+interface Props { title: string; introduction: string; section: string; }
+const { title, introduction, section } = Astro.props;
+---
+<BaseLayout title={`${title} — Alan's Realm`} description={introduction} currentSection={section}>
+  <section class="site-shell page-intro">
+    <p class="page-intro__eyebrow">Alan's Realm · {section}</p>
+    <h1>{title}</h1>
+    <p>{introduction}</p>
+  </section>
+  <section class="site-shell"><slot /></section>
+</BaseLayout>

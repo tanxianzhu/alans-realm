@@ -1,0 +1,25 @@
+---
+interface Props { number: string; label: string; title: string; subtitle?: string; href: string; image: string; imagePosition?: string; }
+const { number, label, title, subtitle, href, image, imagePosition = 'center' } = Astro.props;
+const titleLines = title.split('\n');
+---
+<section class="realm" style={`--realm-image: url('${image}'); --realm-position: ${imagePosition};`}>
+  <span class="realm__number">{number} · {label}</span>
+  <a class="realm__title" href={href}>
+    {titleLines.map((line) => <span class="realm__title-line">{line}</span>)}
+    {subtitle && <span class="realm__subtitle">{subtitle}</span>}
+  </a>
+</section>
+<style>
+  .realm { align-items: flex-start; aspect-ratio: 16 / 9; background-image: linear-gradient(102deg, rgba(14, 20, 15, .58), rgba(14, 20, 15, .1) 58%, rgba(14, 20, 15, .32)), var(--realm-image); background-position: var(--realm-position); background-size: cover; border-bottom: 1px solid rgba(248, 244, 233, .32); color: #f8f4e9; display: flex; flex-direction: column; justify-content: space-between; padding: clamp(1.5rem, 4vw, 4.25rem); width: 100%; }
+  .realm__number { font-size: var(--size-xs); letter-spacing: .15em; text-transform: uppercase; }
+  .realm__title { color: inherit; display: block; font-family: var(--font-display); font-size: clamp(2.25rem, 6vw, 6.6rem); letter-spacing: -.05em; line-height: .88; text-align: left; text-decoration: none; text-shadow: 0 2px 16px rgba(12, 17, 13, .34); transform-origin: left bottom; transition: color .28s ease, letter-spacing .28s ease, text-shadow .28s ease, transform .28s cubic-bezier(.2, .75, .2, 1); }
+  .realm__title:hover, .realm__title:focus-visible { color: #fffdf8; letter-spacing: -.025em; text-shadow: .34rem .38rem 0 rgba(14, 20, 15, .3), 0 2px 16px rgba(20, 27, 22, .4); transform: translateX(.45rem) scale(1.018); }
+  .realm__title-line { display: block; white-space: nowrap; }
+  .realm__subtitle { display: block; font-family: var(--font-body); font-size: var(--size-xs); font-weight: 400; letter-spacing: .16em; margin-top: 1.35rem; text-transform: uppercase; }
+  @media (max-width: 32rem) {
+    .realm { aspect-ratio: 16 / 10; padding: 1.25rem; }
+    .realm__title { font-size: clamp(1.28rem, 6.4vw, 2rem); letter-spacing: -.065em; }
+    .realm__subtitle { margin-top: .8rem; }
+  }
+</style>

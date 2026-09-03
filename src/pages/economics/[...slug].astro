@@ -1,0 +1,16 @@
+---
+import { getCollection, render } from 'astro:content';
+import NoteLayout from '../../layouts/NoteLayout.astro';
+export async function getStaticPaths() {
+  const lessons = await getCollection('lessons', ({ data }) => data.section === 'economics' && data.status === 'published');
+  return lessons.map((lesson) => ({
+    params: { slug: lesson.id.replace(/^economics\//, '').replace(/\.mdx$/, '') },
+    props: { lesson },
+  }));
+}
+const { lesson } = Astro.props;
+const { Content } = await render(lesson);
+---
+<NoteLayout title={lesson.data.title} description={lesson.data.description} section={lesson.data.section}>
+  <Content />
+</NoteLayout>

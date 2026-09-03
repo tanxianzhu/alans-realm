@@ -1,0 +1,24 @@
+---
+import type { TranscriptParagraph } from '../../data/speeches/game-rules';
+
+interface Props {
+  transcript: TranscriptParagraph[];
+}
+
+const { transcript } = Astro.props;
+---
+
+<section class="speech-transcript" aria-labelledby="transcript-title" data-speech-transcript>
+  <header class="speech-transcript__header">
+    <p>Full transcript</p>
+    <h2 id="transcript-title">Follow the argument as it unfolds.</h2>
+  </header>
+  <div class="speech-transcript__body">
+    {transcript.map((paragraph, index) => (
+      <button type="button" class="speech-transcript__paragraph" data-transcript-start={paragraph.start} data-transcript-end={paragraph.end}>
+        <span>{String(index + 1).padStart(2, '0')}</span>
+        <span>{paragraph.text}</span>
+      </button>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,19 @@
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# OS
+.DS_Store
+
+# Scratch / work-in-progress
+work/
+outputs/

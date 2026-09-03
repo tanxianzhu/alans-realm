@@ -1,0 +1,38 @@
+---
+interface Props {
+  src: string;
+  type: string;
+  title: string;
+}
+
+const { src, type, title } = Astro.props;
+---
+
+<section class="speech-audio" aria-label="Audio player" data-speech-player>
+  <audio preload="metadata" data-speech-audio>
+    <source src={src} type={type} />
+    Your browser does not support audio playback.
+  </audio>
+  <div class="speech-audio__topline">
+    <button class="speech-audio__play" type="button" data-audio-play aria-label={`Play ${title}`}>
+      <span aria-hidden="true" data-play-symbol>Play</span>
+    </button>
+    <p class="speech-audio__timing"><span data-audio-current>0:00</span><i aria-hidden="true">/</i><span data-audio-duration>0:00</span></p>
+    <label class="speech-audio__volume" aria-label="Volume">
+      <span>Volume</span>
+      <input type="range" min="0" max="1" step="0.01" value="1" data-audio-volume />
+    </label>
+    <button class="speech-audio__mute" type="button" data-audio-mute>Mute</button>
+    <label class="speech-audio__speed">
+      <span class="sr-only">Playback speed</span>
+      <select data-audio-speed aria-label="Playback speed">
+        <option value="0.75">0.75×</option>
+        <option value="1" selected>1×</option>
+        <option value="1.25">1.25×</option>
+        <option value="1.5">1.5×</option>
+        <option value="2">2×</option>
+      </select>
+    </label>
+  </div>
+  <input class="speech-audio__seek" type="range" min="0" max="0" value="0" step="0.1" aria-label="Seek through the speech" data-audio-seek />
+</section>

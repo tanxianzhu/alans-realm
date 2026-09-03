@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHero from '../components/SectionHero.astro';
+const realms = [
+  { number: '01', label: 'English Corner', title: "Alan's\nEnglish Corner", subtitle: '2026 Fall', href: '/english/', image: '/images/realms/english-corner.jpg', imagePosition: 'center 31%' },
+  { number: '02', label: 'Economics', title: "Alan's\nEconomics Commons", subtitle: '2026 Summer', href: '/economics/', image: '/images/realms/economics-repin.jpg', imagePosition: 'center' },
+  { number: '03', label: 'Art', title: "Alan's\nArt Workshop", subtitle: '2026 Spring', href: '/art/', image: '/images/realms/art-monet.jpg', imagePosition: 'center' },
+  { number: '04', label: 'Wonder', title: 'Field of Wonder', href: '/wonder/', image: '/images/realms/wonder-vangogh.jpg', imagePosition: 'center' },
+];
+---
+<BaseLayout isHome>
+  <section class="home-intro">
+    <img class="home-intro__image" src="/images/home-hero.jpg" alt="Alan standing on a hillside above a forest" />
+    <div class="home-intro__shade" aria-hidden="true"></div>
+    <div class="home-intro__content site-shell">
+      <h1>Alan's Realm</h1>
+      <span>A place for things worth wondering about.</span>
+    </div>
+  </section>
+  <section class="realm-zone" aria-label="Explore the realms">
+    <div class="realms">
+      {realms.map((realm) => <SectionHero {...realm} />)}
+    </div>
+  </section>
+</BaseLayout>
+<style>
+  .home-intro { color: #f8f4e9; display: grid; min-height: 100svh; overflow: hidden; position: relative; width: 100%; }
+  .home-intro__image, .home-intro__shade { inset: 0; position: absolute; }
+  .home-intro__image { height: 100%; object-fit: cover; object-position: center 92%; width: 100%; }
+  .home-intro__shade { background: linear-gradient(180deg, rgba(17, 25, 18, .12) 20%, rgba(17, 25, 18, .58) 100%); }
+  .home-intro__content { align-self: end; display: grid; padding-bottom: clamp(2rem, 5vw, 4.5rem); position: relative; z-index: 1; }
+  .home-intro h1 { color: inherit; font-size: var(--size-title); letter-spacing: -.07em; margin: 0; max-width: 7ch; text-shadow: 0 2px 22px rgba(13, 18, 14, .35); }
+  .home-intro span { color: rgba(255, 253, 248, .86); font-family: var(--font-display); font-size: clamp(1.15rem, 2vw, 1.45rem); line-height: 1.25; margin-top: 1.35rem; text-shadow: 0 1px 10px rgba(13, 18, 14, .45); }
+  .realm-zone { background: var(--color-paper); }
+  .realms { margin: 0; padding: 0; width: 100%; }
+  @media (max-aspect-ratio: 3 / 4) { .home-intro__image { object-position: 62% 92%; } }
+  @media (max-width: 40rem) { .home-intro__content { padding-bottom: 2.5rem; } }
+</style>

@@ -1,0 +1,11 @@
+---
+const { prompt = 'A future place to share your response.' } = Astro.props;
+---
+<aside class="interaction">
+  <p>Discussion space</p>
+  <span>{prompt}</span>
+</aside>
+<style>
+  .interaction { border-top: 1px solid var(--color-line); color: var(--color-muted); margin-top: var(--space-5); padding-top: var(--space-2); }
+  p { color: var(--color-ink); font-size: var(--size-xs); letter-spacing: .1em; margin: 0 0 .35rem; text-transform: uppercase; }
+</style>

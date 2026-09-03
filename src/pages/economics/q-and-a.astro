@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EconomicsQAPage from '../../components/EconomicsQAPage.astro';
+import { getPublicEconomicsQuestionData } from '../../lib/feishu-questions';
+
+const { questions, groups, source } = await getPublicEconomicsQuestionData();
+---
+
+<BaseLayout title="Economics Q&A — Alan's Realm" description="Write to Alan, read public questions, and open private letters." currentSection="economics" bodyClass="qa-page">
+  <EconomicsQAPage questions={questions} groups={groups} source={source} />
+</BaseLayout>

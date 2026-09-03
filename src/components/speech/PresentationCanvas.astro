@@ -1,0 +1,19 @@
+---
+interface Props {
+  label: string;
+}
+
+const { label } = Astro.props;
+---
+
+<section class="speech-map" aria-label={label} data-presentation-canvas>
+  <div class="speech-map__status" aria-live="polite">
+    <span data-map-index>01</span>
+    <p data-map-chapter>Question</p>
+  </div>
+  <div class="speech-map__stage">
+    <svg class="speech-map__edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" data-map-edges></svg>
+    <div class="speech-map__nodes" data-map-nodes></div>
+  </div>
+  <p class="speech-map__title" data-map-title>A game begins with one question.</p>
+</section>

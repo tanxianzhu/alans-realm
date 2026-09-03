@@ -1,0 +1,5 @@
+body { font-family: var(--font-body); font-size: var(--size-base); font-weight: 400; letter-spacing: .002em; line-height: 1.7; }
+h1, h2, h3, p { margin-top: 0; }
+h1, h2, h3 { color: var(--color-ink); font-family: var(--font-display); font-weight: 400; letter-spacing: -.035em; line-height: .98; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+::selection { background: #c8d7cc; color: var(--color-ink); }

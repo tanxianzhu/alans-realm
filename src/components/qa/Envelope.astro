@@ -1,0 +1,32 @@
+---
+interface Props { label?: string; }
+const { label = 'Open a letter to Alan' } = Astro.props;
+---
+
+<button class="qa-envelope" type="button" data-envelope-toggle aria-expanded="false" aria-label={label}>
+  <span class="qa-envelope__back" aria-hidden="true"></span>
+  <span class="qa-envelope__flap" aria-hidden="true">
+    <svg viewBox="0 0 160 128" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="qa-envelope-flap-paper" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#fff" />
+          <stop offset="1" stop-color="#e8eaec" />
+        </linearGradient>
+      </defs>
+      <path d="M2 2H158L91 86Q80 100 69 86Z" fill="url(#qa-envelope-flap-paper)" />
+      <path d="M2 2L69 86Q80 100 91 86L158 2" fill="none" />
+    </svg>
+  </span>
+  <span class="qa-envelope__front" aria-hidden="true">
+    <svg viewBox="0 0 160 128" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="qa-envelope-pocket-paper" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#f8f9f9" />
+          <stop offset="1" stop-color="#e3e5e6" />
+        </linearGradient>
+      </defs>
+      <path d="M2 126L69 66Q80 57 91 66L158 126Z" fill="url(#qa-envelope-pocket-paper)" />
+      <path d="M2 126L69 66Q80 57 91 66L158 126" fill="none" />
+    </svg>
+  </span>
+</button>

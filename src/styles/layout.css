@@ -1,0 +1,23 @@
+.site-shell { margin: 0 auto; width: min(var(--page-width), calc(100% - 4rem)); }
+.page-intro { border-bottom: 1px solid var(--color-line); padding: clamp(6.5rem, 13vw, 11.5rem) 0 clamp(3.5rem, 7vw, 6rem); }
+.page-intro__eyebrow { color: var(--color-muted); font-size: var(--size-xs); letter-spacing: .16em; margin-bottom: 1.35rem; max-width: none !important; text-transform: uppercase; white-space: nowrap; }
+.page-intro h1 { font-size: var(--size-xl); margin-bottom: 1.7rem; max-width: 13ch; }
+.page-intro p { color: var(--color-muted); font-family: var(--font-display); font-size: clamp(1.25rem, 2.1vw, 1.55rem); line-height: 1.35; max-width: 32ch; }
+.prose { font-family: var(--font-reading); font-size: clamp(1.05rem, 1.2vw, 1.12rem); line-height: 1.82; margin: 0 auto; padding: clamp(4.5rem, 9vw, 8rem) 0; width: min(var(--content-width), calc(100% - 4rem)); }
+.prose h1 { font-size: clamp(2.9rem, 7vw, 5rem); margin-bottom: var(--space-5); }
+.prose h2 { font-size: clamp(2.1rem, 4.4vw, 3.4rem); margin: var(--space-6) 0 var(--space-3); }
+.prose h2 + p { font-size: 1.17rem; }
+.prose h3 { font-size: 1.55rem; margin: var(--space-4) 0 var(--space-2); }
+.prose p, .prose ul, .prose ol { margin-bottom: 1.7rem; }
+.prose strong { color: var(--color-accent); font-weight: 700; }
+.prose blockquote { border-left: 1px solid var(--color-accent); color: var(--color-muted); font-family: var(--font-display); font-size: 1.23rem; line-height: 1.45; margin: var(--space-4) 0; padding: .15rem 0 .15rem 1.45rem; }
+.prose hr { border: 0; border-top: 1px solid var(--color-line); margin: var(--space-5) 0; }
+@media (max-width: 40rem) {
+  .site-shell { width: min(var(--page-width), calc(100% - 2.5rem)); }
+  .page-intro { padding-bottom: clamp(2.8rem, 10vw, 4rem); padding-top: clamp(5rem, 16vw, 7rem); }
+  .page-intro p { font-size: 1.15rem; }
+  .prose { font-size: 1.04rem; padding-top: 3.8rem; width: calc(100% - 2.5rem); }
+  .prose h1 { font-size: clamp(2.6rem, 13vw, 4rem); }
+  .prose h2 { font-size: clamp(1.95rem, 10vw, 2.8rem); margin-top: clamp(4rem, 15vw, 6rem); }
+  .prose blockquote { font-size: 1.1rem; margin-left: 0; padding-left: 1rem; }
+}

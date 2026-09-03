@@ -1,0 +1,19 @@
+---
+interface Props { src: string; alt: string; caption?: string; placement?: 'standard' | 'portrait' | 'inset' | 'float-right' | 'float-left'; }
+const { src, alt, caption, placement = 'standard' } = Astro.props;
+---
+<figure class:list={[`figure--${placement}`]}>
+  <img src={src} alt={alt} loading="lazy" />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+<style>
+  figure { margin: var(--space-4) 0; }
+  .figure--standard img { width: 100%; }
+  .figure--portrait { margin-left: auto; margin-right: auto; max-width: 27rem; }
+  .figure--inset { margin-left: auto; max-width: 20rem; }
+  .figure--float-right { float: right; margin: .35rem 0 1.25rem 1.8rem; width: min(13.5rem, 38%); }
+  .figure--float-left { float: left; margin: .35rem 1.8rem 1.25rem 0; width: min(13.5rem, 38%); }
+  img { display: block; height: auto; max-width: 100%; }
+  figcaption { color: var(--color-muted); font-size: var(--size-xs); margin-top: .7rem; }
+  @media (max-width: 34rem) { .figure--float-right, .figure--float-left { float: none; margin: var(--space-3) auto; max-width: 18rem; width: auto; } }
+</style>

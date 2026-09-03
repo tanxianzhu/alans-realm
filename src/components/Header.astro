@@ -1,0 +1,32 @@
+---
+const { currentSection, isHome = false } = Astro.props;
+---
+<header class:list={['header', isHome && 'header--home']}>
+  <div class="header__inner site-shell">
+    <a class="brand" href="/">Homepage</a>
+    <nav aria-label="Main navigation">
+      <a class:list={[currentSection === 'english' && 'active']} href="/english/">English Corner</a>
+      <a class:list={[currentSection === 'economics' && 'active']} href="/economics/">Economics</a>
+      <a class:list={[currentSection === 'art' && 'active']} href="/art/">Art</a>
+      <a class:list={[currentSection === 'wonder' && 'active']} href="/wonder/">Fields of Wonder</a>
+    </nav>
+  </div>
+</header>
+<style>
+  .header { background: color-mix(in srgb, var(--color-paper) 92%, transparent); border-bottom: 1px solid var(--color-line); position: relative; z-index: 2; }
+  .header__inner { align-items: center; display: flex; justify-content: space-between; max-width: none; padding: 1.15rem 0 1.05rem; width: calc(100% - 4rem); }
+  .brand { font-family: var(--font-display); font-size: 1.2rem; letter-spacing: -.02em; text-decoration: none; }
+  nav { display: flex; gap: clamp(1rem, 2vw, 1.8rem); margin-left: auto; }
+  nav a { color: var(--color-muted); font-size: var(--size-xs); letter-spacing: .12em; padding: .35rem 0; text-decoration: none; text-transform: uppercase; }
+  nav a:hover, nav a.active { color: var(--color-ink); text-decoration: none; }
+  nav a.active { border-bottom: 1px solid currentColor; }
+  .header--home { backdrop-filter: blur(14px); background: rgba(22, 29, 24, .32); border-bottom-color: rgba(248, 244, 233, .3); left: 0; position: absolute; right: 0; top: 0; z-index: 1; }
+  .header--home .brand, .header--home nav a { color: #f8f4e9; }
+  .header--home nav a:hover, .header--home nav a.active { color: #fffdf8; }
+  @media (max-width: 40rem) {
+    .header__inner { align-items: stretch; flex-direction: column; gap: .7rem; width: calc(100% - 2.5rem); }
+    nav { display: grid; gap: .45rem 1rem; grid-template-columns: 1fr 1fr; margin-left: 0; width: 100%; }
+    nav a:nth-child(even) { text-align: right; }
+  }
+  @media (max-width: 28rem) { .header__inner { padding: 1rem 0; } nav { gap: .4rem .7rem; } nav a { font-size: .61rem; letter-spacing: .08em; } }
+</style>
