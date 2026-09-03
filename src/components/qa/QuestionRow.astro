@@ -1,4 +1,5 @@
 ---
+import { withBase } from '../../lib/path';
 import type { EconomicsQuestion } from '../../data/economics-qa';
 
 interface Props {
@@ -7,7 +8,7 @@ interface Props {
 }
 
 const { question, number } = Astro.props;
-const href = question.id === 'remember-rules' ? '/economics/speeches/game-rules/' : undefined;
+const href = question.id === 'remember-rules' ? withBase('/economics/speeches/game-rules/') : undefined;
 ---
 
 <li class="qa-question-row">
