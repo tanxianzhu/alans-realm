@@ -6,6 +6,6 @@ import { getPublicEconomicsQuestionData } from '../../lib/feishu-questions';
 const { questions, groups } = await getPublicEconomicsQuestionData();
 ---
 
-<BaseLayout title="Public Questions — Alan's Realm" description="Public questions and Alan’s answers." currentSection="economics" bodyClass="qa-page">
+<BaseLayout title="Q&A Sessions — Alan's Realm" description="Questions and Alan’s answers." currentSection="economics" bodyClass="qa-page">
   <EconomicsQAPage questions={questions} groups={groups} />
 </BaseLayout>

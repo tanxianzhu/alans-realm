@@ -15,12 +15,17 @@ const groupedQuestions = groups
   .filter(({ questions: groupQuestions }) => groupQuestions.length);
 const ungroupedQuestions = questions.filter((question) => !question.groupId);
 const envelopeImage = withBase('/images/qa/question-envelope/envelope-closed-source.png');
+const groupTitles: Record<string, string> = {
+  'learning-play': 'Learning & Play',
+  'value-care': 'Lecture Contents',
+  discussion: 'More about me',
+};
 ---
 
 <div class="qa-page-content">
   <section class="qa-hero qa-shell" aria-labelledby="public-questions">
     <p class="qa-eyebrow">Alan’s Economics Commons</p>
-    <h1 id="public-questions">Public<br />questions.</h1>
+    <h1 id="public-questions">Q&amp;A<br />Sessions.</h1>
     <p class="qa-intro">A growing collection of questions, conversations, and answers worth sharing.</p>
   </section>
 
@@ -28,8 +33,7 @@ const envelopeImage = withBase('/images/qa/question-envelope/envelope-closed-sou
     {groupedQuestions.map(({ group, questions: groupQuestions }) => (
       <section class="qa-question-group" aria-labelledby={`group-${group.id}`}>
         <div class="qa-question-group__heading">
-          <h2 id={`group-${group.id}`}>{group.name}</h2>
-          <span>{String(groupQuestions.length).padStart(2, '0')}</span>
+          <h2 id={`group-${group.id}`}>{groupTitles[group.id] || group.name}</h2>
         </div>
         <ol>
           {groupQuestions.map((question, index) => <QuestionRow question={question} number={index + 1} />)}
@@ -40,7 +44,6 @@ const envelopeImage = withBase('/images/qa/question-envelope/envelope-closed-sou
       <section class="qa-question-group" aria-labelledby="group-other">
         <div class="qa-question-group__heading">
           <h2 id="group-other">More questions</h2>
-          <span>{String(ungroupedQuestions.length).padStart(2, '0')}</span>
         </div>
         <ol>
           {ungroupedQuestions.map((question, index) => <QuestionRow question={question} number={index + 1} />)}
