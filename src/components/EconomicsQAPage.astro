@@ -1,294 +1,60 @@
 ---
 import type { EconomicsQuestion, QuestionGroup } from '../data/economics-qa';
-import Envelope from './qa/Envelope.astro';
-import Hedwig from './qa/Hedwig.astro';
-import LetterPaper from './qa/LetterPaper.astro';
+import { withBase } from '../lib/path';
 import QuestionRow from './qa/QuestionRow.astro';
-import QuestionBox from './qa/QuestionBox.astro';
 import '../styles/qa.css';
 
 interface Props {
   questions: EconomicsQuestion[];
   groups: QuestionGroup[];
-  source: 'feishu' | 'local';
 }
 
-const { questions, groups, source } = Astro.props;
+const { questions, groups } = Astro.props;
 const groupedQuestions = groups
   .map((group) => ({ group, questions: questions.filter((question) => question.groupId === group.id) }))
-  .filter(({ questions }) => questions.length);
+  .filter(({ questions: groupQuestions }) => groupQuestions.length);
 const ungroupedQuestions = questions.filter((question) => !question.groupId);
+const envelopeImage = withBase('/images/qa/question-envelope/envelope-closed-source.png');
 ---
 
-<div class="qa-correspondence" data-qa-correspondence data-letter-stage="closed">
-  <section class="qa-correspondence__hero qa-shell">
-    <p class="qa-kicker">Alan’s Economics Commons</p>
-    <h1>Economics Q&amp;A</h1>
-    <p class="qa-subtitle">Your questions. Alan’s answers.</p>
+<div class="qa-page-content">
+  <section class="qa-hero qa-shell" aria-labelledby="public-questions">
+    <p class="qa-eyebrow">Alan’s Economics Commons</p>
+    <h1 id="public-questions">Public<br />questions.</h1>
+    <p class="qa-intro">A growing collection of questions, conversations, and answers worth sharing.</p>
   </section>
 
-  <section class="qa-compose qa-shell" aria-labelledby="raise-question">
-    <div class="qa-section-heading">
-      <span>01</span>
-      <div>
-        <p>Raise a question</p>
-        <h2 id="raise-question">Write to Alan.</h2>
-      </div>
-    </div>
-    <div class="qa-compose__stage">
-      <div class="qa-compose__copy">
-        <p>Drop your letter in the Question Box.</p>
-        <button class="qa-text-link" type="button" data-open-letter>Open an envelope <span aria-hidden="true">→</span></button>
-      </div>
-      <div class="qa-compose__envelope"><Envelope /></div>
-      <div class="qa-compose__delivery" aria-hidden="true"></div>
-      <div class="qa-compose__box"><QuestionBox /></div>
-      <div class="qa-compose__owl"><Hedwig /></div>
-      <div class="qa-compose__letter" data-letter-area inert>
-        <LetterPaper />
-      </div>
-    </div>
+  <section class="qa-list qa-shell" aria-label="Public questions">
+    {groupedQuestions.map(({ group, questions: groupQuestions }) => (
+      <section class="qa-question-group" aria-labelledby={`group-${group.id}`}>
+        <div class="qa-question-group__heading">
+          <h2 id={`group-${group.id}`}>{group.name}</h2>
+          <span>{String(groupQuestions.length).padStart(2, '0')}</span>
+        </div>
+        <ol>
+          {groupQuestions.map((question, index) => <QuestionRow question={question} number={index + 1} />)}
+        </ol>
+      </section>
+    ))}
+    {ungroupedQuestions.length > 0 && (
+      <section class="qa-question-group" aria-labelledby="group-other">
+        <div class="qa-question-group__heading">
+          <h2 id="group-other">More questions</h2>
+          <span>{String(ungroupedQuestions.length).padStart(2, '0')}</span>
+        </div>
+        <ol>
+          {ungroupedQuestions.map((question, index) => <QuestionRow question={question} number={index + 1} />)}
+        </ol>
+      </section>
+    )}
   </section>
 
-  <section class="qa-public qa-shell" aria-labelledby="public-questions">
-    <div class="qa-section-heading">
-      <span>02</span>
-      <div>
-        <p>Public questions</p>
-        <h2 id="public-questions">Letters shared with everyone.</h2>
-      </div>
-      <small class:list={{ 'qa-source-note': true, 'is-live': source === 'feishu' }}>
-        {source === 'feishu' ? 'Feishu Bitable · public records' : 'Local reading copy'}
-      </small>
+  <section class="qa-contact qa-shell" aria-labelledby="contact-alan">
+    <div class="qa-contact__copy">
+      <p class="qa-eyebrow">A question of your own?</p>
+      <h2 id="contact-alan">Start a conversation with Alan.</h2>
+      <p>Reach Alan on WeChat to share a new question. The best ones may find a home here.</p>
     </div>
-    <div class="qa-public__list">
-      {groupedQuestions.map(({ group, questions: groupQuestions }) => (
-        <section class="qa-question-chapter" aria-labelledby={`group-${group.id}`}>
-          <h3 id={`group-${group.id}`}>{group.name}</h3>
-          <ol>{groupQuestions.map((question, index) => <QuestionRow question={question} number={index + 1} />)}</ol>
-        </section>
-      ))}
-      {ungroupedQuestions.length > 0 && (
-        <section class="qa-question-chapter" aria-labelledby="group-other">
-          <h3 id="group-other">Other letters</h3>
-          <ol>{ungroupedQuestions.map((question, index) => <QuestionRow question={question} number={index + 1} />)}</ol>
-        </section>
-      )}
-    </div>
-  </section>
-
-  <section class="qa-private qa-shell" aria-labelledby="private-letters">
-    <div class="qa-section-heading">
-      <span>03</span>
-      <div>
-        <p>Private letters</p>
-        <h2 id="private-letters">Some letters are meant for one reader only.</h2>
-      </div>
-    </div>
-    <div class="qa-private__inner">
-      <div class="qa-private__seal" aria-hidden="true">⌑</div>
-      <form data-private-form>
-        <p class="qa-private__help">Send yourself a private letter above, then return here with the same name and passcode to open it.</p>
-        <label><span>Your name</span><input name="private-name" autocomplete="name" required /></label>
-        <label><span>Passcode</span><input name="private-passcode" type="password" required /></label>
-        <button type="submit" data-private-button>Open my letters <span aria-hidden="true">→</span></button>
-        <p data-private-status aria-live="polite"></p>
-        <div class="qa-private__letters" data-private-list hidden aria-live="polite"></div>
-      </form>
-    </div>
+    <img class="qa-contact__envelope" src={envelopeImage} alt="A sealed envelope" loading="lazy" />
   </section>
 </div>
-
-<script>
-  const root = document.querySelector('[data-qa-correspondence]');
-
-  if (root) {
-    const apiOrigin = import.meta.env.PUBLIC_QA_API_ORIGIN
-      || (window.location.hostname === '127.0.0.1' ? 'http://127.0.0.1:8787' : '');
-    const stage = (value) => root.setAttribute('data-letter-stage', value);
-    const envelope = root.querySelector('[data-envelope-toggle]');
-    const openButtons = root.querySelectorAll('[data-open-letter]');
-    const form = root.querySelector('[data-letter-form]');
-    const letterArea = root.querySelector('[data-letter-area]');
-    const passcodeField = root.querySelector('[data-passcode-field]');
-    const success = root.querySelector('[data-letter-success]');
-    const error = root.querySelector('[data-letter-error]');
-    const errorCopy = root.querySelector('[data-letter-error-copy]');
-    const box = root.querySelector('[data-question-box]');
-    const owl = root.querySelector('[data-owl]');
-    const sendButton = root.querySelector('[data-send-letter]');
-    const closeButton = root.querySelector('[data-close-letter]');
-    let closeTimer;
-
-    const deliveryFailure = (message) => {
-      if (errorCopy) errorCopy.textContent = message || 'Your letter hasn’t been sent yet.';
-      form.hidden = true;
-      error.hidden = false;
-      stage('error');
-    };
-
-    const postLetter = async (path, body) => {
-      if (!apiOrigin) throw new Error('The letter service is not configured for this site.');
-      const response = await fetch(`${apiOrigin}${path}`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok || !payload.ok) throw new Error(payload.message || 'Your letter could not be delivered.');
-      return payload;
-    };
-
-    const openLetter = () => {
-      window.clearTimeout(closeTimer);
-      stage('open');
-      letterArea?.removeAttribute('inert');
-      envelope?.setAttribute('aria-expanded', 'true');
-    };
-
-    const closeLetter = () => {
-      if (root.getAttribute('data-letter-stage') !== 'open') return;
-      stage('closing');
-      letterArea?.setAttribute('inert', '');
-      envelope?.setAttribute('aria-expanded', 'false');
-      // JS only ends the interaction state; every visible fold is driven by CSS.
-      const closeDuration = Number.parseFloat(getComputedStyle(root).getPropertyValue('--letter-close-duration')) || 2300;
-      closeTimer = window.setTimeout(() => stage('closed'), closeDuration);
-    };
-
-    const resetLetter = () => {
-      form?.reset();
-      if (form) {
-        form.hidden = false;
-        form.setAttribute('data-private', 'false');
-      }
-      passcodeField?.setAttribute('aria-hidden', 'true');
-      letterArea?.removeAttribute('inert');
-      success.hidden = true;
-      error.hidden = true;
-      if (sendButton) {
-        sendButton.disabled = false;
-        sendButton.removeAttribute('aria-busy');
-      }
-      box?.classList.remove('has-letter');
-      owl?.classList.remove('is-arrived');
-      stage('open');
-    };
-
-    envelope?.addEventListener('click', openLetter);
-    openButtons.forEach((button) => button.addEventListener('click', openLetter));
-    closeButton?.addEventListener('click', closeLetter);
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeLetter();
-    });
-    root.querySelectorAll('input[name="visibility"]').forEach((input) => input.addEventListener('change', () => {
-      const isPrivate = input instanceof HTMLInputElement && input.value === 'private' && input.checked;
-      form?.setAttribute('data-private', String(isPrivate));
-      passcodeField?.setAttribute('aria-hidden', String(!isPrivate));
-    }));
-
-    form?.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (!form.reportValidity()) return;
-      const values = new FormData(form);
-      const visibility = String(values.get('visibility') || 'public');
-      const passcode = String(values.get('passcode') || '');
-      if (visibility === 'private' && passcode.length < 6) {
-        const field = form.querySelector('input[name="passcode"]');
-        field?.setCustomValidity('Use at least six characters for a private-letter passcode.');
-        field?.reportValidity();
-        field?.addEventListener('input', () => field.setCustomValidity(''), { once: true });
-        return;
-      }
-      try {
-        if (sendButton) {
-          sendButton.disabled = true;
-          sendButton.setAttribute('aria-busy', 'true');
-        }
-        await postLetter('/api/questions', {
-          name: values.get('name'),
-          question: values.get('question'),
-          group: values.get('group'),
-          visibility,
-          passcode,
-          note: values.get('note'),
-        });
-        stage('delivering');
-        const deliveryDuration = Number.parseFloat(getComputedStyle(root).getPropertyValue('--delivery-duration')) || 760;
-        window.setTimeout(() => {
-          form.hidden = true;
-          success.hidden = false;
-          box?.classList.add('has-letter');
-          owl?.classList.add('is-arrived');
-          stage('sent');
-        }, deliveryDuration);
-      } catch (caught) {
-        deliveryFailure(caught instanceof Error ? caught.message : 'Your letter hasn’t been sent yet.');
-      } finally {
-        if (sendButton) {
-          sendButton.disabled = false;
-          sendButton.removeAttribute('aria-busy');
-        }
-      }
-    });
-
-    root.addEventListener('qa:delivery-failed', () => deliveryFailure());
-    root.querySelector('[data-new-letter]')?.addEventListener('click', resetLetter);
-    root.querySelector('[data-try-again]')?.addEventListener('click', () => {
-      error.hidden = true;
-      form.hidden = false;
-      stage('open');
-    });
-    root.querySelector('[data-private-form]')?.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const status = root.querySelector('[data-private-status]');
-      const privateForm = event.currentTarget;
-      const submit = root.querySelector('[data-private-button]');
-      const list = root.querySelector('[data-private-list]');
-      if (!(privateForm instanceof HTMLFormElement)) return;
-      if (!privateForm.reportValidity()) return;
-      const values = new FormData(privateForm);
-      if (status) status.textContent = 'Checking the seal…';
-      if (list) {
-        list.hidden = true;
-        list.replaceChildren();
-      }
-      if (submit instanceof HTMLButtonElement) submit.disabled = true;
-      try {
-        const payload = await postLetter('/api/private-letters', {
-          name: values.get('private-name'),
-          passcode: values.get('private-passcode'),
-        });
-        const letters = Array.isArray(payload.letters) ? payload.letters : [];
-        if (!letters.length) {
-          if (status) status.textContent = 'No private letters match this name and passcode yet. Send yourself a private letter above to try it.';
-          return;
-        }
-        if (status) status.textContent = `${letters.length} private ${letters.length === 1 ? 'letter' : 'letters'} opened.`;
-        if (list) {
-          for (const letter of letters) {
-            const article = document.createElement('article');
-            const heading = document.createElement('h3');
-            heading.textContent = letter.question || 'Untitled letter';
-            article.append(heading);
-            if (letter.note) {
-              const note = document.createElement('p');
-              note.textContent = letter.note;
-              article.append(note);
-            }
-            const reply = document.createElement('p');
-            reply.className = 'qa-private__reply';
-            reply.textContent = letter.answer || 'Alan has not replied yet.';
-            article.append(reply);
-            list.append(article);
-          }
-          list.hidden = false;
-        }
-      } catch (caught) {
-        if (status) status.textContent = caught instanceof Error ? caught.message : 'Private letters could not be opened.';
-      } finally {
-        if (submit instanceof HTMLButtonElement) submit.disabled = false;
-      }
-    });
-  }
-</script>
