@@ -42,6 +42,7 @@ const { answer } = Astro.props;
   {answer.comicSrc && (
     <figure class="answer-page__comic answer-shell">
       <img src={withBase(answer.comicSrc)} alt={`Illustration for: ${answer.question}`} loading="lazy" />
+      {answer.comicCredit && <figcaption>{answer.comicCredit}</figcaption>}
     </figure>
   )}
 
@@ -153,6 +154,13 @@ const { answer } = Astro.props;
     display: block;
     height: auto;
     width: 100%;
+  }
+  .answer-page__comic figcaption {
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    margin-top: 0.7rem;
   }
   .answer-page__bottom-image {
     margin: clamp(2.5rem, 5vw, 4rem) auto clamp(4rem, 8vw, 7rem);
