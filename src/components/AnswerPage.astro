@@ -12,8 +12,8 @@ const { answer } = Astro.props;
 
 <article class="answer-page" data-answer-page>
   <header class="answer-page__hero answer-shell">
-    <p class="answer-page__eyebrow">Alan's Economics Commons <span aria-hidden="true">/</span> Q&A Answer</p>
-    <h1>{answer.question}</h1>
+    <p class="answer-page__eyebrow">Alan's Economics Commons</p>
+    <h1>Q&amp;A Session</h1>
     <p class="answer-page__byline">{answer.speaker}</p>
   </header>
 
@@ -59,10 +59,6 @@ const { answer } = Astro.props;
     margin: 0 0 1.15rem;
     text-transform: uppercase;
   }
-  .answer-page__eyebrow span {
-    color: var(--color-accent);
-    padding: 0 0.35rem;
-  }
   .answer-page h1 {
     font-family: var(--font-display);
     font-size: clamp(2.4rem, 6.5vw, 5rem);
@@ -103,7 +99,7 @@ const { answer } = Astro.props;
   }
   .answer-page__asker-avatar {
     align-items: center;
-    background: var(--color-ink);
+    background: var(--color-accent);
     border-radius: 50%;
     color: var(--color-paper);
     display: flex;

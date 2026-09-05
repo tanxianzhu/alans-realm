@@ -19,7 +19,8 @@ const speeds = [0.75, 1, 1.25, 1.5, 2];
 
   <div class="answer-audio__row">
     <button class="answer-audio__play" type="button" data-answer-audio-play aria-label="Play or pause">
-      <span data-answer-audio-play-icon>Play</span>
+      <svg class="answer-audio__play-icon answer-audio__play-icon--play" data-answer-audio-play-icon="play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10-6.5z" fill="currentColor" /></svg>
+      <svg class="answer-audio__play-icon answer-audio__play-icon--pause" data-answer-audio-play-icon="pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 5.5h3v13h-3zm6 0h3v13h-3z" fill="currentColor" /></svg>
     </button>
 
     <div class="answer-audio__time">
@@ -28,18 +29,24 @@ const speeds = [0.75, 1, 1.25, 1.5, 2];
       <span data-answer-audio-duration>0:00</span>
     </div>
 
-    <div class="answer-audio__speeds" role="group" aria-label="Playback speed">
-      {speeds.map((speed) => (
-        <button
-          type="button"
-          class="answer-audio__speed"
-          data-answer-audio-speed
-          data-speed={speed}
-          aria-pressed={speed === 1 ? 'true' : 'false'}
-        >
-          {speed}×
-        </button>
-      ))}
+    <div class="answer-audio__speed-menu" data-answer-audio-speed-menu>
+      <button class="answer-audio__speed-trigger" type="button" data-answer-audio-speed-trigger aria-expanded="false" aria-controls="answer-audio-speeds">
+        <span data-answer-audio-speed-label>1×</span>
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" /></svg>
+      </button>
+      <div class="answer-audio__speeds" id="answer-audio-speeds" role="group" aria-label="Playback speed" hidden>
+        {speeds.map((speed) => (
+          <button
+            type="button"
+            class="answer-audio__speed"
+            data-answer-audio-speed
+            data-speed={speed}
+            aria-pressed={speed === 1 ? 'true' : 'false'}
+          >
+            {speed}×
+          </button>
+        ))}
+      </div>
     </div>
   </div>
 
@@ -58,38 +65,40 @@ const speeds = [0.75, 1, 1.25, 1.5, 2];
 <style>
   .answer-audio {
     border: 1px solid var(--color-line);
-    border-radius: 1rem;
-    padding: 1.25rem 1.5rem;
+    border-radius: 1.25rem;
+    padding: 1rem 1.25rem 1.15rem;
     background: var(--color-paper);
   }
   .answer-audio__row {
     align-items: center;
     display: flex;
-    gap: 1.25rem;
+    gap: 0.8rem;
   }
   .answer-audio__play {
-    background: var(--color-ink);
+    align-items: center;
+    background: var(--color-accent);
     border: 0;
     border-radius: 999px;
     color: var(--color-paper);
     cursor: pointer;
-    font-family: var(--font-body);
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    min-width: 4.5rem;
-    padding: 0.75rem 1.25rem;
-    text-transform: uppercase;
+    display: flex;
+    height: 3rem;
+    justify-content: center;
+    padding: 0;
     transition: background 0.2s ease, transform 0.15s ease;
   }
   .answer-audio__play:hover,
   .answer-audio__play:focus-visible {
-    background: var(--color-accent);
+    background: #29493d;
     outline: 0;
   }
   .answer-audio__play:active {
     transform: scale(0.97);
   }
+  .answer-audio__play-icon { height: 1.15rem; width: 1.15rem; }
+  .answer-audio__play-icon--pause { display: none; }
+  .answer-audio.is-playing .answer-audio__play-icon--play { display: none; }
+  .answer-audio.is-playing .answer-audio__play-icon--pause { display: block; }
   .answer-audio__time {
     color: var(--color-muted);
     font-family: var(--font-body);
@@ -102,32 +111,63 @@ const speeds = [0.75, 1, 1.25, 1.5, 2];
     margin: 0 0.35rem;
     opacity: 0.5;
   }
-  .answer-audio__speeds {
-    display: flex;
-    gap: 0.35rem;
+  .answer-audio__speed-menu {
     margin-left: auto;
+    position: relative;
+  }
+  .answer-audio__speed-trigger {
+    align-items: center;
+    background: transparent;
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    color: var(--color-accent);
+    cursor: pointer;
+    display: flex;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 700;
+    gap: 0.2rem;
+    letter-spacing: 0.02em;
+    min-width: 4.25rem;
+    padding: 0.55rem 0.75rem;
+  }
+  .answer-audio__speed-trigger svg { height: 0.9rem; width: 0.9rem; }
+  .answer-audio__speed-menu.is-open .answer-audio__speed-trigger { background: #edf2ec; }
+  .answer-audio__speeds {
+    background: var(--color-paper);
+    border: 1px solid var(--color-line);
+    border-radius: 0.85rem;
+    bottom: calc(100% + 0.55rem);
+    box-shadow: 0 0.75rem 2rem rgba(32, 33, 29, 0.12);
+    display: grid;
+    gap: 0.15rem;
+    padding: 0.3rem;
+    position: absolute;
+    right: 0;
+    width: 5rem;
+    z-index: 2;
   }
   .answer-audio__speed {
     background: transparent;
     border: 1px solid var(--color-line);
-    border-radius: 999px;
+    border: 0;
+    border-radius: 0.55rem;
     color: var(--color-muted);
     cursor: pointer;
     font-family: var(--font-body);
     font-size: 0.7rem;
     font-weight: 500;
-    padding: 0.4rem 0.7rem;
+    padding: 0.5rem 0.65rem;
     transition: all 0.18s ease;
   }
   .answer-audio__speed:hover,
   .answer-audio__speed:focus-visible {
-    border-color: var(--color-ink);
-    color: var(--color-ink);
+    background: #edf2ec;
+    color: var(--color-accent);
     outline: 0;
   }
   .answer-audio__speed[aria-pressed='true'] {
-    background: var(--color-ink);
-    border-color: var(--color-ink);
+    background: var(--color-accent);
     color: var(--color-paper);
   }
   .answer-audio__seek {
@@ -136,39 +176,38 @@ const speeds = [0.75, 1, 1.25, 1.5, 2];
     background: transparent;
     cursor: pointer;
     display: block;
-    margin: 1rem 0 0;
+    margin: 1.1rem 0 0;
     width: 100%;
   }
   .answer-audio__seek::-webkit-slider-runnable-track {
-    background: var(--color-line);
+    background: #d7d2c8;
     border-radius: 999px;
     height: 4px;
   }
   .answer-audio__seek::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    background: var(--color-ink);
+    background: var(--color-accent);
     border-radius: 50%;
     height: 14px;
     margin-top: -5px;
     width: 14px;
   }
   .answer-audio__seek::-moz-range-track {
-    background: var(--color-line);
+    background: #d7d2c8;
     border-radius: 999px;
     height: 4px;
   }
   .answer-audio__seek::-moz-range-thumb {
-    background: var(--color-ink);
+    background: var(--color-accent);
     border: 0;
     border-radius: 50%;
     height: 14px;
     width: 14px;
   }
   @media (max-width: 42rem) {
-    .answer-audio { padding: 1rem; }
-    .answer-audio__row { flex-wrap: wrap; gap: 0.75rem; }
-    .answer-audio__speeds { margin-left: 0; width: 100%; flex-wrap: wrap; }
+    .answer-audio { padding: 0.9rem 1rem 1rem; }
+    .answer-audio__row { gap: 0.7rem; }
   }
 </style>
 
@@ -177,7 +216,10 @@ const speeds = [0.75, 1, 1.25, 1.5, 2];
   if (root) {
     const audio = root.querySelector('[data-answer-audio-element]') as HTMLAudioElement;
     const playButton = root.querySelector('[data-answer-audio-play]') as HTMLButtonElement;
-    const playIcon = root.querySelector('[data-answer-audio-play-icon]') as HTMLElement;
+    const speedMenu = root.querySelector('[data-answer-audio-speed-menu]') as HTMLElement;
+    const speedTrigger = root.querySelector('[data-answer-audio-speed-trigger]') as HTMLButtonElement;
+    const speedsPanel = root.querySelector('[data-answer-audio-speed-menu] [role="group"]') as HTMLElement;
+    const speedLabel = root.querySelector('[data-answer-audio-speed-label]') as HTMLElement;
     const current = root.querySelector('[data-answer-audio-current]') as HTMLElement;
     const duration = root.querySelector('[data-answer-audio-duration]') as HTMLElement;
     const seek = root.querySelector('[data-answer-audio-seek]') as HTMLInputElement;
@@ -203,9 +245,9 @@ const speeds = [0.75, 1, 1.25, 1.5, 2];
     });
     audio.addEventListener('timeupdate', sync);
     audio.addEventListener('seeked', sync);
-    audio.addEventListener('play', () => { playIcon.textContent = 'Pause'; });
-    audio.addEventListener('pause', () => { playIcon.textContent = 'Play'; });
-    audio.addEventListener('ended', () => { playIcon.textContent = 'Play'; });
+    audio.addEventListener('play', () => { root.classList.add('is-playing'); });
+    audio.addEventListener('pause', () => { root.classList.remove('is-playing'); });
+    audio.addEventListener('ended', () => { root.classList.remove('is-playing'); });
 
     playButton.addEventListener('click', () => {
       audio.paused ? audio.play() : audio.pause();
@@ -221,7 +263,26 @@ const speeds = [0.75, 1, 1.25, 1.5, 2];
         const speed = Number(button.dataset.speed);
         audio.playbackRate = speed;
         speedButtons.forEach((b) => b.setAttribute('aria-pressed', b === button ? 'true' : 'false'));
+        speedLabel.textContent = `${speed}×`;
+        speedsPanel.hidden = true;
+        speedMenu.classList.remove('is-open');
+        speedTrigger.setAttribute('aria-expanded', 'false');
       });
+    });
+
+    speedTrigger.addEventListener('click', () => {
+      const willOpen = speedsPanel.hidden;
+      speedsPanel.hidden = !willOpen;
+      speedMenu.classList.toggle('is-open', willOpen);
+      speedTrigger.setAttribute('aria-expanded', String(willOpen));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!speedMenu.contains(event.target as Node)) {
+        speedsPanel.hidden = true;
+        speedMenu.classList.remove('is-open');
+        speedTrigger.setAttribute('aria-expanded', 'false');
+      }
     });
 
     document.addEventListener('keydown', (event) => {

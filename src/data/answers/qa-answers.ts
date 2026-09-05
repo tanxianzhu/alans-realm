@@ -1,4 +1,5 @@
 import playAllDayTranscript from '../transcripts/play-all-day.md?raw';
+import loveStudyingTranscript from '../transcripts/love-studying.md?raw';
 import rememberRulesTranscript from '../transcripts/remember-rules.md?raw';
 import scienceBooksTranscript from '../transcripts/science-books.md?raw';
 import tagSkillTranscript from '../transcripts/tag-skill.md?raw';
@@ -72,6 +73,16 @@ export const qaAnswers: QaAnswer[] = [
     audioSrc: '/audio/economics/qa/science-books.m4a',
     audioType: 'audio/mp4',
     transcript: toParagraphs(scienceBooksTranscript),
+  },
+  {
+    id: 'love-studying',
+    slug: 'why-do-you-love-studying',
+    asker: 'Joy',
+    question: 'Alan, you’re such a keen learner! Why do you love studying so much?',
+    speaker: 'Alan · An answer for Joy',
+    audioSrc: '/audio/economics/qa/love-studying.m4a',
+    audioType: 'audio/mp4',
+    transcript: toParagraphs(loveStudyingTranscript),
   },
 ];
 
