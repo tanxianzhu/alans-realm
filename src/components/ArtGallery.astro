@@ -9,12 +9,12 @@ type Artwork = {
 };
 
 const artworks: Artwork[] = [
-  { title: 'Kingfisher', artist: 'Chris', image: 'kingfisher.jpg', orientation: 'portrait' },
+  { title: 'Hummingbird', artist: 'Chris', image: 'kingfisher.jpg', orientation: 'portrait' },
   { title: 'Fox & Flowers', artist: 'Amumu', image: 'fox.jpg', orientation: 'portrait' },
-  { title: 'Young Tiger', artist: 'Jenny', image: 'tiger.jpg', orientation: 'portrait' },
+  { title: 'Little Tiger', artist: 'Jenny', image: 'tiger.jpg', orientation: 'portrait' },
   { title: 'Fox in Bloom', artist: 'Layla', image: 'fox-flowers.jpg', orientation: 'portrait' },
   { title: 'Flowers', artist: 'Nichole', image: 'flowers.jpg', orientation: 'landscape' },
-  { title: 'Resting Tiger', artist: 'Alan lead · painted together', image: 'tiger-resting.jpg', orientation: 'portrait' },
+  { title: 'Spring Sleep', artist: 'Led by Alan, a collaborative painting', image: 'tiger-resting.jpg', orientation: 'portrait' },
 ];
 
 const asset = (name: string) => withBase(`/images/art/gallery/${name}`);
@@ -22,9 +22,9 @@ const asset = (name: string) => withBase(`/images/art/gallery/${name}`);
 
 <section class="art-gallery" data-art-gallery aria-labelledby="art-gallery-title">
   <div class="art-gallery__intro site-shell">
-    <p>Clear Water Bay · Student exhibition</p>
     <h2 id="art-gallery-title">Art Gallery by the Clear Water Bay</h2>
-    <span>Scroll to wander through the collection <i aria-hidden="true">→</i></span>
+    <p>Clear Water Bay · Student exhibition</p>
+    <span>Scroll or use the slider to wander through the collection <i aria-hidden="true">→</i></span>
   </div>
 
   <div class="art-gallery__viewport" data-art-gallery-viewport>
@@ -43,6 +43,11 @@ const asset = (name: string) => withBase(`/images/art/gallery/${name}`);
       ))}
     </div>
   </div>
+  <div class="art-gallery__controls site-shell" aria-label="Gallery navigation">
+    <span>01</span>
+    <input class="art-gallery__slider" data-art-gallery-slider type="range" min="0" max="100" value="0" step="0.1" aria-label="Browse artworks" />
+    <span>{String(artworks.length).padStart(2, '0')}</span>
+  </div>
 </section>
 
 <script>
@@ -54,8 +59,29 @@ const asset = (name: string) => withBase(`/images/art/gallery/${name}`);
   const gallery = document.querySelector<HTMLElement>('[data-art-gallery]');
   const viewport = gallery?.querySelector<HTMLElement>('[data-art-gallery-viewport]');
   const track = gallery?.querySelector<HTMLElement>('[data-art-gallery-track]');
+  const slider = gallery?.querySelector<HTMLInputElement>('[data-art-gallery-slider]');
 
-  if (gallery && viewport && track && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  if (gallery && viewport && track && slider) {
+    let scrollTrigger: ScrollTrigger | undefined;
+    const setSliderValue = (progress: number) => {
+      slider.value = String(Math.round(progress * 1000) / 10);
+    };
+    const updateFromSlider = () => {
+      const progress = Number(slider.value) / 100;
+      if (scrollTrigger) {
+        window.scrollTo({ top: scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * progress, behavior: 'auto' });
+        return;
+      }
+      if (window.matchMedia('(min-width: 48rem)').matches) {
+        gsap.set(track, { x: -(track.scrollWidth - viewport.clientWidth) * progress });
+        return;
+      }
+      viewport.scrollTo({ left: (viewport.scrollWidth - viewport.clientWidth) * progress, behavior: 'smooth' });
+    };
+
+    slider.addEventListener('input', updateFromSlider);
+
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const context = gsap.context(() => {
       const media = gsap.matchMedia();
       media.add('(min-width: 48rem)', () => {
@@ -70,28 +96,40 @@ const asset = (name: string) => withBase(`/images/art/gallery/${name}`);
             pin: true,
             scrub: .8,
             invalidateOnRefresh: true,
+            onUpdate: (self) => setSliderValue(self.progress),
           },
         });
-        return () => tween.kill();
+        scrollTrigger = tween.scrollTrigger;
+        return () => {
+          scrollTrigger = undefined;
+          tween.kill();
+        };
+      });
+      media.add('(max-width: 47.99rem)', () => {
+        const syncSlider = () => setSliderValue(viewport.scrollLeft / Math.max(1, viewport.scrollWidth - viewport.clientWidth));
+        viewport.addEventListener('scroll', syncSlider, { passive: true });
+        return () => viewport.removeEventListener('scroll', syncSlider);
       });
       return () => media.revert();
     }, gallery);
-    window.addEventListener('pagehide', () => context.revert(), { once: true });
+      window.addEventListener('pagehide', () => {
+        slider.removeEventListener('input', updateFromSlider);
+        context.revert();
+      }, { once: true });
+    }
   }
 </script>
 
 <style>
   .art-gallery {
-    --gallery-paper: #efeadd;
     --gallery-ink: #292319;
     --gallery-gold: #9e762e;
-    background: var(--gallery-paper);
     margin: var(--space-6) calc(50% - 50vw) 0;
     overflow: hidden;
-    padding: clamp(4.5rem, 10vw, 8rem) 0 clamp(5rem, 10vw, 8rem);
+    padding: clamp(4.5rem, 10vw, 8rem) 0 clamp(3rem, 7vw, 5rem);
     width: 100vw;
   }
-  .art-gallery__intro { align-items: end; display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr) auto; margin-bottom: clamp(3rem, 7vw, 5.5rem); }
+  .art-gallery__intro { display: grid; gap: .9rem; margin-bottom: clamp(3rem, 7vw, 5.5rem); }
   .art-gallery__intro p, .art-gallery__intro span, .art-gallery figcaption span {
     color: #6e614c;
     font-family: var(--font-body);
@@ -100,14 +138,14 @@ const asset = (name: string) => withBase(`/images/art/gallery/${name}`);
     margin: 0;
     text-transform: uppercase;
   }
-  .art-gallery__intro h2 { color: var(--gallery-ink); font-size: clamp(2.8rem, 6vw, 6rem); letter-spacing: -.055em; line-height: .9; margin: 0; max-width: 13ch; }
-  .art-gallery__intro span { align-self: end; padding-bottom: .55rem; white-space: nowrap; }
+  .art-gallery__intro h2 { color: var(--gallery-ink); font-size: var(--size-xl); letter-spacing: -.055em; line-height: .94; margin: 0; max-width: 17ch; }
+  .art-gallery__intro span { white-space: nowrap; }
   .art-gallery__intro i { color: var(--gallery-gold); font-size: 1rem; font-style: normal; margin-left: .35rem; }
   .art-gallery__viewport { overflow: hidden; padding: 1rem max(2rem, calc((100vw - var(--page-width)) / 2)); }
   .art-gallery__track { align-items: start; display: flex; gap: clamp(2rem, 5vw, 6rem); width: max-content; }
-  .art-gallery__card { flex: 0 0 auto; margin: 0; width: clamp(16rem, 25vw, 24rem); }
-  .art-gallery__card--landscape { margin-top: clamp(4rem, 9vw, 8.5rem); width: clamp(23rem, 35vw, 34rem); }
-  .art-gallery__frame { aspect-ratio: 1122 / 1402; filter: drop-shadow(0 1.1rem 1.2rem rgba(53, 40, 19, .25)); position: relative; }
+  .art-gallery__card { display: grid; flex: 0 0 auto; grid-template-rows: clamp(20rem, 31.25vw, 30rem) auto; margin: 0; width: clamp(16rem, 25vw, 24rem); }
+  .art-gallery__card--landscape { width: clamp(23rem, 35vw, 34rem); }
+  .art-gallery__frame { align-self: center; aspect-ratio: 1122 / 1402; filter: drop-shadow(0 1.1rem 1.2rem rgba(53, 40, 19, .25)); position: relative; }
   .art-gallery__card--landscape .art-gallery__frame { aspect-ratio: 1448 / 1086; }
   .art-gallery__work { height: 65%; left: 19.5%; object-fit: cover; position: absolute; top: 17.3%; width: 61%; }
   .art-gallery__card--landscape .art-gallery__work { height: 65%; left: 12.5%; top: 17.5%; width: 75%; }
@@ -117,13 +155,20 @@ const asset = (name: string) => withBase(`/images/art/gallery/${name}`);
   .art-gallery figcaption div { display: grid; gap: .32rem; }
   .art-gallery figcaption strong { color: var(--gallery-ink); font-family: var(--font-display); font-size: 1.3rem; font-weight: 400; line-height: 1; }
   .art-gallery figcaption em { color: #716656; font-family: var(--font-body); font-size: .72rem; font-style: normal; letter-spacing: .1em; text-transform: uppercase; }
+  .art-gallery__controls { align-items: center; display: grid; gap: 1rem; grid-template-columns: 2rem minmax(8rem, 1fr) 2rem; margin-top: clamp(2.5rem, 5vw, 4rem); }
+  .art-gallery__controls span { color: var(--gallery-gold); font-family: var(--font-body); font-size: .68rem; letter-spacing: .15em; text-align: center; }
+  .art-gallery__slider { appearance: none; background: linear-gradient(var(--color-line), var(--color-line)) center / 100% 1px no-repeat; cursor: ew-resize; height: 1.75rem; margin: 0; width: 100%; }
+  .art-gallery__slider::-webkit-slider-thumb { appearance: none; background: var(--gallery-ink); border: 3px solid var(--color-paper); border-radius: 50%; box-shadow: 0 0 0 1px var(--gallery-gold); height: 1rem; width: 1rem; }
+  .art-gallery__slider::-moz-range-thumb { background: var(--gallery-ink); border: 3px solid var(--color-paper); border-radius: 50%; box-shadow: 0 0 0 1px var(--gallery-gold); height: .7rem; width: .7rem; }
+  .art-gallery__slider:focus-visible { outline: 2px solid var(--gallery-gold); outline-offset: .25rem; }
   @media (max-width: 47.99rem) {
     .art-gallery { margin-top: var(--space-5); padding-bottom: 4rem; padding-top: 4rem; }
-    .art-gallery__intro { align-items: start; grid-template-columns: 1fr; }
-    .art-gallery__intro span { display: none; }
+    .art-gallery__intro { gap: .75rem; }
+    .art-gallery__intro span { white-space: normal; }
     .art-gallery__viewport { overflow-x: auto; padding: 1rem 1.25rem 2rem; scroll-snap-type: x mandatory; scrollbar-color: var(--gallery-gold) transparent; }
     .art-gallery__track { gap: 2rem; }
-    .art-gallery__card { scroll-snap-align: center; width: min(72vw, 20rem); }
-    .art-gallery__card--landscape { margin-top: 3rem; width: min(92vw, 27rem); }
+    .art-gallery__card { grid-template-rows: min(90vw, 25rem) auto; scroll-snap-align: center; width: min(72vw, 20rem); }
+    .art-gallery__card--landscape { width: min(92vw, 27rem); }
+    .art-gallery__controls { margin-top: 1.5rem; width: min(var(--page-width), calc(100% - 2.5rem)); }
   }
 </style>
