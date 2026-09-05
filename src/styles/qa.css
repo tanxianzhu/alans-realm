@@ -118,7 +118,7 @@ body.qa-page {
 
 @media (max-width: 46rem) {
   .qa-shell { width: min(100% - 2rem, var(--page-width)); }
-  .qa-hero__inner { padding-bottom: 2.35rem; }
+  .qa-hero__inner { padding-bottom: 1.25rem; }
   .qa-hero .qa-eyebrow { margin-bottom: .85rem; }
   .qa-hero h1 {
     font-size: clamp(3rem, 8vw, 4rem);
