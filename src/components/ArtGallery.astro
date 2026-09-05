@@ -1,0 +1,129 @@
+---
+import { withBase } from '../lib/path';
+
+type Artwork = {
+  title: string;
+  artist: string;
+  image: string;
+  orientation: 'portrait' | 'landscape';
+};
+
+const artworks: Artwork[] = [
+  { title: 'Kingfisher', artist: 'Chris', image: 'kingfisher.jpg', orientation: 'portrait' },
+  { title: 'Fox & Flowers', artist: 'Amumu', image: 'fox.jpg', orientation: 'portrait' },
+  { title: 'Young Tiger', artist: 'Jenny', image: 'tiger.jpg', orientation: 'portrait' },
+  { title: 'Fox in Bloom', artist: 'Layla', image: 'fox-flowers.jpg', orientation: 'portrait' },
+  { title: 'Flowers', artist: 'Nichole', image: 'flowers.jpg', orientation: 'landscape' },
+  { title: 'Resting Tiger', artist: 'Alan lead · painted together', image: 'tiger-resting.jpg', orientation: 'portrait' },
+];
+
+const asset = (name: string) => withBase(`/images/art/gallery/${name}`);
+---
+
+<section class="art-gallery" data-art-gallery aria-labelledby="art-gallery-title">
+  <div class="art-gallery__intro site-shell">
+    <p>Clear Water Bay · Student exhibition</p>
+    <h2 id="art-gallery-title">Art Gallery by the Clear Water Bay</h2>
+    <span>Scroll to wander through the collection <i aria-hidden="true">→</i></span>
+  </div>
+
+  <div class="art-gallery__viewport" data-art-gallery-viewport>
+    <div class="art-gallery__track" data-art-gallery-track>
+      {artworks.map((artwork, index) => (
+        <figure class:list={['art-gallery__card', `art-gallery__card--${artwork.orientation}`]}>
+          <div class="art-gallery__frame">
+            <img class="art-gallery__work" src={asset(artwork.image)} alt={`${artwork.title}, painted by ${artwork.artist}`} loading={index > 1 ? 'lazy' : 'eager'} />
+            <img class="art-gallery__moulding" src={asset(`frame-${artwork.orientation}.png`)} alt="" aria-hidden="true" loading="lazy" />
+          </div>
+          <figcaption>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <div><strong>{artwork.title}</strong><em>{artwork.artist}</em></div>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const gallery = document.querySelector<HTMLElement>('[data-art-gallery]');
+  const viewport = gallery?.querySelector<HTMLElement>('[data-art-gallery-viewport]');
+  const track = gallery?.querySelector<HTMLElement>('[data-art-gallery-track]');
+
+  if (gallery && viewport && track && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const context = gsap.context(() => {
+      const media = gsap.matchMedia();
+      media.add('(min-width: 48rem)', () => {
+        const distance = () => Math.max(0, track.scrollWidth - viewport.clientWidth);
+        const tween = gsap.to(track, {
+          x: () => -distance(),
+          ease: 'none',
+          scrollTrigger: {
+            trigger: gallery,
+            start: 'top top',
+            end: () => `+=${distance() + window.innerHeight * .55}`,
+            pin: true,
+            scrub: .8,
+            invalidateOnRefresh: true,
+          },
+        });
+        return () => tween.kill();
+      });
+      return () => media.revert();
+    }, gallery);
+    window.addEventListener('pagehide', () => context.revert(), { once: true });
+  }
+</script>
+
+<style>
+  .art-gallery {
+    --gallery-paper: #efeadd;
+    --gallery-ink: #292319;
+    --gallery-gold: #9e762e;
+    background: var(--gallery-paper);
+    margin: var(--space-6) calc(50% - 50vw) 0;
+    overflow: hidden;
+    padding: clamp(4.5rem, 10vw, 8rem) 0 clamp(5rem, 10vw, 8rem);
+    width: 100vw;
+  }
+  .art-gallery__intro { align-items: end; display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr) auto; margin-bottom: clamp(3rem, 7vw, 5.5rem); }
+  .art-gallery__intro p, .art-gallery__intro span, .art-gallery figcaption span {
+    color: #6e614c;
+    font-family: var(--font-body);
+    font-size: .68rem;
+    letter-spacing: .15em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+  .art-gallery__intro h2 { color: var(--gallery-ink); font-size: clamp(2.8rem, 6vw, 6rem); letter-spacing: -.055em; line-height: .9; margin: 0; max-width: 13ch; }
+  .art-gallery__intro span { align-self: end; padding-bottom: .55rem; white-space: nowrap; }
+  .art-gallery__intro i { color: var(--gallery-gold); font-size: 1rem; font-style: normal; margin-left: .35rem; }
+  .art-gallery__viewport { overflow: hidden; padding: 1rem max(2rem, calc((100vw - var(--page-width)) / 2)); }
+  .art-gallery__track { align-items: start; display: flex; gap: clamp(2rem, 5vw, 6rem); width: max-content; }
+  .art-gallery__card { flex: 0 0 auto; margin: 0; width: clamp(16rem, 25vw, 24rem); }
+  .art-gallery__card--landscape { margin-top: clamp(4rem, 9vw, 8.5rem); width: clamp(23rem, 35vw, 34rem); }
+  .art-gallery__frame { aspect-ratio: 1122 / 1402; filter: drop-shadow(0 1.1rem 1.2rem rgba(53, 40, 19, .25)); position: relative; }
+  .art-gallery__card--landscape .art-gallery__frame { aspect-ratio: 1448 / 1086; }
+  .art-gallery__work { height: 65%; left: 19.5%; object-fit: cover; position: absolute; top: 17.3%; width: 61%; }
+  .art-gallery__card--landscape .art-gallery__work { height: 65%; left: 12.5%; top: 17.5%; width: 75%; }
+  .art-gallery__moulding { height: 100%; inset: 0; max-width: none; pointer-events: none; position: absolute; width: 100%; }
+  .art-gallery figcaption { align-items: start; border-top: 1px solid rgba(96, 75, 40, .34); display: grid; gap: 1rem; grid-template-columns: 2rem 1fr; margin: 1.4rem .75rem 0; padding-top: .75rem; }
+  .art-gallery figcaption span { color: var(--gallery-gold); padding-top: .22rem; }
+  .art-gallery figcaption div { display: grid; gap: .32rem; }
+  .art-gallery figcaption strong { color: var(--gallery-ink); font-family: var(--font-display); font-size: 1.3rem; font-weight: 400; line-height: 1; }
+  .art-gallery figcaption em { color: #716656; font-family: var(--font-body); font-size: .72rem; font-style: normal; letter-spacing: .1em; text-transform: uppercase; }
+  @media (max-width: 47.99rem) {
+    .art-gallery { margin-top: var(--space-5); padding-bottom: 4rem; padding-top: 4rem; }
+    .art-gallery__intro { align-items: start; grid-template-columns: 1fr; }
+    .art-gallery__intro span { display: none; }
+    .art-gallery__viewport { overflow-x: auto; padding: 1rem 1.25rem 2rem; scroll-snap-type: x mandatory; scrollbar-color: var(--gallery-gold) transparent; }
+    .art-gallery__track { gap: 2rem; }
+    .art-gallery__card { scroll-snap-align: center; width: min(72vw, 20rem); }
+    .art-gallery__card--landscape { margin-top: 3rem; width: min(92vw, 27rem); }
+  }
+</style>
