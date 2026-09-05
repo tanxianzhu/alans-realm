@@ -1,8 +1,6 @@
 ---
-import type { AnswerTranscriptParagraph } from '../../data/answers/how-to-learn-game-rules';
-
 interface Props {
-  transcript: AnswerTranscriptParagraph[];
+  transcript: string[];
 }
 
 const { transcript } = Astro.props;
@@ -15,15 +13,10 @@ const { transcript } = Astro.props;
   </header>
   <div class="answer-transcript__body">
     {transcript.map((paragraph, index) => (
-      <button
-        type="button"
-        class="answer-transcript__paragraph"
-        data-transcript-start={paragraph.start}
-        data-transcript-end={paragraph.end}
-      >
+      <p class="answer-transcript__paragraph">
         <span class="answer-transcript__number">{String(index + 1).padStart(2, '0')}</span>
-        <span class="answer-transcript__text">{paragraph.text}</span>
-      </button>
+        <span class="answer-transcript__text">{paragraph}</span>
+      </p>
     ))}
   </div>
 </section>
@@ -59,11 +52,9 @@ const { transcript } = Astro.props;
   }
   .answer-transcript__paragraph {
     align-items: start;
-    background: none;
     border: 0;
     border-bottom: 1px solid var(--color-line);
     color: var(--color-muted);
-    cursor: pointer;
     display: grid;
     font-family: var(--font-display);
     font-size: clamp(1rem, 1.7vw, 1.25rem);
@@ -72,7 +63,7 @@ const { transcript } = Astro.props;
     line-height: 1.6;
     padding: 1.25rem 0;
     text-align: left;
-    transition: color 0.2s ease, background-color 0.2s ease, padding 0.2s ease;
+    margin: 0;
     width: 100%;
   }
   .answer-transcript__number {
@@ -84,21 +75,6 @@ const { transcript } = Astro.props;
   }
   .answer-transcript__text {
     color: inherit;
-  }
-  .answer-transcript__paragraph:hover,
-  .answer-transcript__paragraph:focus-visible,
-  .answer-transcript__paragraph.is-active {
-    background: rgba(0, 0, 0, 0.02);
-    color: var(--color-ink);
-    outline: 0;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-  .answer-transcript__paragraph.is-active {
-    border-bottom-color: var(--color-accent);
-  }
-  .answer-transcript__paragraph.is-active .answer-transcript__number {
-    color: var(--color-accent);
   }
   @media (max-width: 36rem) {
     .answer-transcript__paragraph {

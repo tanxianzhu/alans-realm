@@ -1,8 +1,11 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import AnswerPage from '../../../components/AnswerPage.astro';
+import { qaAnswersBySlug } from '../../../data/answers/qa-answers';
+
+const answer = qaAnswersBySlug.get('how-to-learn-and-remember-game-rules');
 ---
 
 <BaseLayout title="How can I learn and remember every game's rules? — Alan's Realm" description="Alan's spoken answer to Dorothy's question about learning and remembering game rules." currentSection="economics">
-  <AnswerPage />
+  {answer && <AnswerPage answer={answer} />}
 </BaseLayout>

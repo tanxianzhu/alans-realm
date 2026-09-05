@@ -1,0 +1,18 @@
+---
+import AnswerPage from '../../../components/AnswerPage.astro';
+import { qaAnswers } from '../../../data/answers/qa-answers';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export function getStaticPaths() {
+  return qaAnswers.map((answer) => ({
+    params: { slug: answer.slug },
+    props: { answer },
+  }));
+}
+
+const { answer } = Astro.props;
+---
+
+<BaseLayout title={`${answer.question} — Alan's Realm`} description={`Alan's recorded answer to ${answer.asker}'s question.`} currentSection="economics">
+  <AnswerPage answer={answer} />
+</BaseLayout>

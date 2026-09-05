@@ -8,12 +8,19 @@ interface Props {
 }
 
 const { question, number } = Astro.props;
-const href = question.id === 'remember-rules' ? withBase('/economics/speeches/game-rules/') : undefined;
+const answerRoutes: Record<string, string> = {
+  'tag-skill': '/economics/q-and-a/how-to-improve-tag-skills/',
+  'win-games': '/economics/q-and-a/how-to-win-all-the-games/',
+  'play-all-day': '/economics/q-and-a/how-can-i-play-all-day/',
+  'remember-rules': '/economics/q-and-a/how-to-learn-and-remember-game-rules/',
+  'science-books': '/economics/q-and-a/how-many-science-books-at-home/',
+};
+const href = answerRoutes[question.id] ? withBase(answerRoutes[question.id]) : undefined;
 ---
 
 <li class="qa-question-row">
   {href ? (
-    <a class="qa-question-row__content qa-question-row__link" href={href} aria-label={`Listen to Alan's answer: ${question.text}`}>
+    <a class="qa-question-row__content qa-question-row__link" href={href} aria-label={`Open Alan's answer: ${question.text}`}>
       <span class="qa-question-row__number">{String(number).padStart(3, '0')}</span>
       <span class="qa-question-row__name">{question.asker}</span>
       <span class="qa-question-row__text">{question.text}</span>

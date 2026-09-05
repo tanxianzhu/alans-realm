@@ -1,24 +1,30 @@
 ---
-import { howToLearnGameRulesAnswer } from '../data/answers/how-to-learn-game-rules';
+import type { QaAnswer } from '../data/answers/qa-answers';
 import AnswerAudioPlayer from './answer/AnswerAudioPlayer.astro';
 import AnswerTranscript from './answer/AnswerTranscript.astro';
+
+interface Props {
+  answer: QaAnswer;
+}
+
+const { answer } = Astro.props;
 ---
 
 <article class="answer-page" data-answer-page>
   <header class="answer-page__hero answer-shell">
     <p class="answer-page__eyebrow">Alan's Economics Commons <span aria-hidden="true">/</span> Q&A Answer</p>
-    <h1>{howToLearnGameRulesAnswer.question}</h1>
-    <p class="answer-page__byline">{howToLearnGameRulesAnswer.speaker}</p>
+    <h1>{answer.question}</h1>
+    <p class="answer-page__byline">{answer.speaker}</p>
   </header>
 
   <section class="answer-page__question answer-shell" aria-labelledby="question-label">
     <div class="answer-page__question-card">
       <p class="answer-page__question-label" id="question-label">The question</p>
       <div class="answer-page__question-body">
-        <span class="answer-page__asker-avatar" aria-hidden="true">{howToLearnGameRulesAnswer.asker.charAt(0)}</span>
+        <span class="answer-page__asker-avatar" aria-hidden="true">{answer.asker.charAt(0)}</span>
         <div>
-          <p class="answer-page__asker-name">{howToLearnGameRulesAnswer.asker}</p>
-          <p class="answer-page__question-text">{howToLearnGameRulesAnswer.question}</p>
+          <p class="answer-page__asker-name">{answer.asker}</p>
+          <p class="answer-page__question-text">{answer.question}</p>
         </div>
       </div>
     </div>
@@ -26,14 +32,14 @@ import AnswerTranscript from './answer/AnswerTranscript.astro';
 
   <section class="answer-page__audio answer-shell" aria-label="Audio recording of Alan's answer">
     <AnswerAudioPlayer
-      src={howToLearnGameRulesAnswer.audioSrc}
-      type={howToLearnGameRulesAnswer.audioType}
-      title={howToLearnGameRulesAnswer.question}
+      src={answer.audioSrc}
+      type={answer.audioType}
+      title={answer.question}
     />
   </section>
 
   <div class="answer-shell">
-    <AnswerTranscript transcript={howToLearnGameRulesAnswer.transcript} />
+    <AnswerTranscript transcript={answer.transcript} />
   </div>
 </article>
 
@@ -134,39 +140,3 @@ import AnswerTranscript from './answer/AnswerTranscript.astro';
     .answer-page__question-card { padding: 1.15rem; }
   }
 </style>
-
-<script>
-  const page = document.querySelector('[data-answer-page]');
-  if (page) {
-    const audio = page.querySelector('[data-answer-audio-element]') as HTMLAudioElement;
-    const transcriptButtons = Array.from(page.querySelectorAll<HTMLButtonElement>('[data-transcript-start]'));
-    let activeButton: HTMLButtonElement | null = null;
-
-    const syncTranscript = (time: number) => {
-      transcriptButtons.forEach((button) => {
-        const start = Number(button.dataset.transcriptStart);
-        const end = Number(button.dataset.transcriptEnd);
-        const isActive = time >= start && time < end;
-        button.classList.toggle('is-active', isActive);
-        if (isActive && activeButton !== button) {
-          activeButton = button;
-        }
-      });
-    };
-
-    if (audio) {
-      audio.addEventListener('timeupdate', () => syncTranscript(audio.currentTime || 0));
-      audio.addEventListener('seeked', () => syncTranscript(audio.currentTime || 0));
-      audio.addEventListener('loadedmetadata', () => syncTranscript(0));
-    }
-
-    transcriptButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        if (audio) {
-          audio.currentTime = Number(button.dataset.transcriptStart);
-          syncTranscript(audio.currentTime);
-        }
-      });
-    });
-  }
-</script>
