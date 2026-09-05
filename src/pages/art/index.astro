@@ -4,7 +4,7 @@ import CourseCard from '../../components/CourseCard.astro';
 import ArtGallery from '../../components/ArtGallery.astro';
 const topics = ['Position', 'Shape', 'Color', 'Light & Shadow'];
 ---
-<SectionLayout title="Alan's Art Workshop" introduction="Learn to see before learning to draw." section="art">
+<SectionLayout title="Alan's Art Workshop" introduction="Learn to see before learning to draw." section="art" heroImage="/images/art/art-workshop-sculpture.png" heroImageAlt="A red abstract sculpture on a stone base">
   <div class="topic-group"><p>Realism</p>{topics.map((title, index) => <CourseCard number={String(index + 1).padStart(2, '0')} title={title} status="Coming soon." />)}</div>
   <div class="topic-group"><p>Expression</p><CourseCard number="—" title="Future lessons" status="Coming soon." /></div>
   <ArtGallery />

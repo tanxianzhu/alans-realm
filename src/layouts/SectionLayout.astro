@@ -11,7 +11,7 @@ interface Props {
 const { title, introduction, section, heroImage, heroImageAlt = '' } = Astro.props;
 ---
 <BaseLayout title={`${title} — Alan's Realm`} description={introduction} currentSection={section}>
-  <section class:list={['site-shell', 'page-intro', heroImage && 'page-intro--with-image']}>
+  <section class:list={['site-shell', 'page-intro', `page-intro--${section}`, heroImage && 'page-intro--with-image']}>
     <div class="page-intro__text">
       <p class="page-intro__eyebrow">Alan's Realm · {section}</p>
       <h1>{title}</h1>
@@ -33,9 +33,8 @@ const { title, introduction, section, heroImage, heroImageAlt = '' } = Astro.pro
     gap: clamp(2rem, 5vw, 4rem);
     grid-template-columns: minmax(0, 1fr) auto;
   }
-  .page-intro__hero {
-    max-width: clamp(13rem, 30vw, 24rem);
-  }
+  .page-intro--economics .page-intro__hero { max-width: clamp(17rem, 34vw, 30rem); }
+  .page-intro--art .page-intro__hero { max-width: clamp(12rem, 21vw, 19rem); }
   .page-intro__hero img {
     display: block;
     height: auto;
@@ -45,10 +44,8 @@ const { title, introduction, section, heroImage, heroImageAlt = '' } = Astro.pro
     .page-intro--with-image {
       grid-template-columns: 1fr;
     }
-    .page-intro__hero {
-      margin: 0 auto;
-      max-width: clamp(10rem, 55vw, 17rem);
-      order: -1;
-    }
+    .page-intro__hero { margin: var(--space-3) 0 0; }
+    .page-intro--economics .page-intro__hero { max-width: min(72vw, 22rem); }
+    .page-intro--art .page-intro__hero { max-width: min(58vw, 17rem); }
   }
 </style>
