@@ -14,6 +14,7 @@ export type QaAnswer = {
   audioSrc: string;
   audioType: string;
   comicSrc?: string;
+  bottomImageSrc?: string;
   transcript: string[];
 };
 
@@ -33,6 +34,7 @@ export const qaAnswers: QaAnswer[] = [
     speaker: 'Alan · A question of his own',
     audioSrc: '/audio/economics/qa/tag-skill.m4a',
     audioType: 'audio/mp4',
+    bottomImageSrc: '/images/qa/answer-bottom/tag-skill.jpg',
     transcript: toParagraphs(tagSkillTranscript),
   },
   {
@@ -44,6 +46,7 @@ export const qaAnswers: QaAnswer[] = [
     audioSrc: '/audio/economics/qa/win-games.m4a',
     audioType: 'audio/mp4',
     comicSrc: '/images/qa/comics/remember-rules.png',
+    bottomImageSrc: '/images/qa/answer-bottom/win-games.jpg',
     transcript: toParagraphs(winGamesTranscript),
   },
   {
@@ -55,6 +58,7 @@ export const qaAnswers: QaAnswer[] = [
     audioSrc: '/audio/economics/qa/play-all-day.m4a',
     audioType: 'audio/mp4',
     comicSrc: '/images/qa/comics/play-all-day.png',
+    bottomImageSrc: '/images/qa/answer-bottom/play-all-day.jpg',
     transcript: toParagraphs(playAllDayTranscript),
   },
   {
@@ -66,6 +70,7 @@ export const qaAnswers: QaAnswer[] = [
     audioSrc: '/audio/economics/how-to-learn-game-rules.m4a',
     audioType: 'audio/mp4',
     comicSrc: '/images/qa/comics/win-games.png',
+    bottomImageSrc: '/images/qa/answer-bottom/remember-rules.jpg',
     transcript: toParagraphs(rememberRulesTranscript),
   },
   {
@@ -77,6 +82,7 @@ export const qaAnswers: QaAnswer[] = [
     audioSrc: '/audio/economics/qa/science-books.m4a',
     audioType: 'audio/mp4',
     comicSrc: '/images/qa/comics/science-books.png',
+    bottomImageSrc: '/images/qa/answer-bottom/science-books.jpg',
     transcript: toParagraphs(scienceBooksTranscript),
   },
   {
@@ -88,6 +94,7 @@ export const qaAnswers: QaAnswer[] = [
     audioSrc: '/audio/economics/qa/love-studying.m4a',
     audioType: 'audio/mp4',
     comicSrc: '/images/qa/comics/love-studying.png',
+    bottomImageSrc: '/images/qa/answer-bottom/love-studying.jpg',
     transcript: toParagraphs(loveStudyingTranscript),
   },
 ];
