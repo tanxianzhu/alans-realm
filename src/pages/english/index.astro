@@ -1,11 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { withBase } from '../../lib/path';
 ---
 
 <BaseLayout title="Alan's English Corner — Alan's Realm" description="English topics for Alan's Realm." currentSection="english">
   <section class="site-shell english-intro">
     <p>Alan's Realm · English Corner</p>
     <h1>Alan's English Corner</h1>
+    <img class="english-intro__hedwig" src={withBase('/images/english/hedwig.png')} alt="Hedwig the owl" loading="eager" />
   </section>
   <section class="site-shell english-topics" aria-labelledby="topics">
     <p class="english-topics__number">01</p>
@@ -20,8 +22,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .english-intro { border-bottom: 1px solid var(--color-line); padding: clamp(5rem, 12vw, 10rem) 0 var(--space-5); }
   .english-intro > p, .english-topics__number { color: var(--color-muted); font-size: var(--size-xs); letter-spacing: .12em; margin-bottom: var(--space-2); text-transform: uppercase; }
   .english-intro h1 { font-size: var(--size-xl); margin-bottom: 0; max-width: 13ch; }
+  .english-intro__hedwig { display: block; margin-top: clamp(2rem, 5vw, 3.5rem); max-width: min(66vw, 28rem); width: 100%; }
   .english-topics { display: grid; gap: var(--space-2); grid-template-columns: 2.5rem minmax(0, 1fr); padding: var(--space-6) 0; }
   .english-topics__number { color: var(--color-accent); margin: .45rem 0 0; }
   .english-topics h2 { font-size: clamp(2.4rem, 6vw, 4.5rem); margin-bottom: var(--space-2); }
   .english-topics div > p { color: var(--color-muted); font-family: var(--font-display); font-size: var(--size-lg); }
+  @media (max-width: 48rem) { .english-intro__hedwig { max-width: min(82vw, 23rem); } }
 </style>

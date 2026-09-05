@@ -43,7 +43,7 @@ export const qaAnswers: QaAnswer[] = [
     speaker: 'Alan · An answer for Dorothy',
     audioSrc: '/audio/economics/qa/win-games.m4a',
     audioType: 'audio/mp4',
-    comicSrc: '/images/qa/comics/win-games.png',
+    comicSrc: '/images/qa/comics/remember-rules.png',
     transcript: toParagraphs(winGamesTranscript),
   },
   {
@@ -65,7 +65,7 @@ export const qaAnswers: QaAnswer[] = [
     speaker: 'Alan · An answer for Dorothy',
     audioSrc: '/audio/economics/how-to-learn-game-rules.m4a',
     audioType: 'audio/mp4',
-    comicSrc: '/images/qa/comics/remember-rules.png',
+    comicSrc: '/images/qa/comics/win-games.png',
     transcript: toParagraphs(rememberRulesTranscript),
   },
   {
