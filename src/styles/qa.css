@@ -10,7 +10,7 @@ body.qa-page {
 }
 
 .qa-page-content { overflow: hidden; }
-.qa-shell { margin-inline: auto; width: min(64rem, calc(100% - 4rem)); }
+.qa-shell { margin-inline: auto; width: min(var(--page-width), calc(100% - 4rem)); }
 .qa-page-content h1, .qa-page-content h2, .qa-page-content p { margin-top: 0; }
 
 .qa-hero {
@@ -117,7 +117,7 @@ body.qa-page {
 .qa-contact__envelope { display: block; filter: drop-shadow(0 1.2rem 1.2rem rgba(47, 43, 34, .17)); justify-self: center; max-width: 100%; transform: rotate(3deg); width: min(19rem, 100%); }
 
 @media (max-width: 46rem) {
-  .qa-shell { width: min(100% - 2rem, 64rem); }
+  .qa-shell { width: min(100% - 2rem, var(--page-width)); }
   .qa-hero__inner { padding-bottom: 3.5rem; }
   .qa-question-row__content { grid-template-columns: 2.7rem minmax(0, 1fr) 1rem; }
   .qa-question-row__number { grid-column: 1; grid-row: 1 / span 2; }
