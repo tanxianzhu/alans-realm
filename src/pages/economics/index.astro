@@ -12,11 +12,22 @@ const lessonLabels: Record<number, string> = { 1: 'L1', 2: 'L2', 3: 'L3', 4: 'L4
       const slug = lesson.id.replace(/^economics\//, '').replace(/\.mdx$/, '');
       return <CourseCard number={lessonLabels[lesson.data.order] ?? `L${lesson.data.order}`} title={lesson.data.title} description={lesson.data.description} href={`/economics/${slug}/`} />;
     })}
-    <a class="qa-link" href={withBase('/economics/q-and-a/')}>Q&A Session <span aria-hidden="true">→</span></a>
+    <a class="qa-link" href={withBase('/economics/q-and-a/')}>
+      <img class="qa-link__hedwig" src={withBase('/images/economics/hedwig.png')} alt="Hedwig the owl" loading="lazy" />
+      <span class="qa-link__title">Q&amp;A Sessions</span>
+      <span class="qa-link__arrow" aria-hidden="true">→</span>
+    </a>
   </div>
 </SectionLayout>
 <style>
   .lesson-list { padding-bottom: var(--space-6); }
-  .qa-link { color: var(--color-ink); display: inline-flex; font-family: var(--font-display); font-size: clamp(1.45rem, 3vw, 2rem); gap: .65rem; margin-top: var(--space-4); text-decoration: none; }
+  .qa-link { align-items: center; color: var(--color-ink); display: inline-flex; font-family: var(--font-display); gap: clamp(.7rem, 2vw, 1.3rem); margin-top: var(--space-4); text-decoration: none; }
+  .qa-link__hedwig { flex: 0 0 auto; height: auto; width: clamp(5rem, 10vw, 8.5rem); }
+  .qa-link__title { font-size: clamp(1.45rem, 3vw, 2rem); }
+  .qa-link__arrow { font-size: clamp(1.25rem, 2.6vw, 1.75rem); }
   .qa-link:hover { color: var(--color-accent); }
+  @media (max-width: 36rem) {
+    .qa-link { gap: .75rem; }
+    .qa-link__hedwig { width: clamp(4.5rem, 22vw, 6rem); }
+  }
 </style>
