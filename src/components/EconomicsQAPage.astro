@@ -15,6 +15,7 @@ const groupedQuestions = groups
   .filter(({ questions: groupQuestions }) => groupQuestions.length);
 const ungroupedQuestions = questions.filter((question) => !question.groupId);
 const envelopeImage = withBase('/images/qa/question-envelope/envelope-closed-source.png');
+const heroImage = withBase('/images/qa/qa-hero.jpg');
 const groupTitles: Record<string, string> = {
   'learning-play': 'Learning & Play',
   'value-care': 'Lecture Contents',
@@ -23,10 +24,12 @@ const groupTitles: Record<string, string> = {
 ---
 
 <div class="qa-page-content">
-  <section class="qa-hero qa-shell" aria-labelledby="public-questions">
-    <p class="qa-eyebrow">Alan’s Economics Commons</p>
-    <h1 id="public-questions">Q&amp;A<br />Sessions.</h1>
-    <p class="qa-intro">A growing collection of questions, conversations, and answers worth sharing.</p>
+  <section class="qa-hero" aria-labelledby="public-questions" style={`--qa-hero-image: url("${heroImage}")`}>
+    <div class="qa-hero__inner qa-shell">
+      <p class="qa-eyebrow">Alan’s Economics Commons</p>
+      <h1 id="public-questions">Q&amp;A<br />Sessions.</h1>
+      <p class="qa-intro">A growing collection of questions, conversations, and answers worth sharing.</p>
+    </div>
   </section>
 
   <section class="qa-list qa-shell" aria-label="Public questions">
@@ -56,7 +59,7 @@ const groupTitles: Record<string, string> = {
     <div class="qa-contact__copy">
       <p class="qa-eyebrow">A question of your own?</p>
       <h2 id="contact-alan">Start a conversation with Alan.</h2>
-      <p>Reach Alan on WeChat to share a new question. The best ones may find a home here.</p>
+      <p>Reach Alan on WeChat to share a new question.</p>
     </div>
     <img class="qa-contact__envelope" src={envelopeImage} alt="A sealed envelope" loading="lazy" />
   </section>
