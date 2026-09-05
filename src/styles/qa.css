@@ -51,7 +51,7 @@ body.qa-page {
 }
 .qa-hero .qa-intro { color: rgba(255, 255, 255, .86); }
 
-.qa-list { border-top: 1px solid var(--qa-line); }
+.qa-list { padding-top: clamp(1.25rem, 3vw, 2rem); }
 .qa-question-group { padding: clamp(2.25rem, 5vw, 4rem) 0; }
 .qa-question-group + .qa-question-group { border-top: 1px solid var(--qa-line); }
 .qa-question-group__heading { margin-bottom: 1.1rem; }
@@ -65,8 +65,7 @@ body.qa-page {
   text-transform: uppercase;
 }
 .qa-question-group ol { list-style: none; margin: 0; padding: 0; }
-.qa-question-row { border-top: 1px solid var(--qa-line); list-style: none; }
-.qa-question-row:last-child { border-bottom: 1px solid var(--qa-line); }
+.qa-question-row { list-style: none; }
 .qa-question-row__content {
   align-items: start;
   color: inherit;
