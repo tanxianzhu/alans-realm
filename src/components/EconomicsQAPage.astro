@@ -10,8 +10,25 @@ interface Props {
 }
 
 const { questions, groups } = Astro.props;
+const questionOrder = [
+  'tag-skill',
+  'remember-rules',
+  'win-games',
+  'play-all-day',
+  'buy-an-ax',
+  'protect-family',
+  'best-gift',
+  'biggest-cake',
+  'experience-based',
+  'science-books',
+  'love-studying',
+];
+const questionRank = new Map(questionOrder.map((id, index) => [id, index]));
+const inDisplayOrder = (items: EconomicsQuestion[]) => [...items].sort(
+  (a, b) => (questionRank.get(a.id) ?? Number.MAX_SAFE_INTEGER) - (questionRank.get(b.id) ?? Number.MAX_SAFE_INTEGER),
+);
 const groupedQuestions = groups
-  .map((group) => ({ group, questions: questions.filter((question) => question.groupId === group.id) }))
+  .map((group) => ({ group, questions: inDisplayOrder(questions.filter((question) => question.groupId === group.id)) }))
   .filter(({ questions: groupQuestions }) => groupQuestions.length);
 const ungroupedQuestions = questions.filter((question) => !question.groupId);
 const envelopeImage = withBase('/images/qa/question-envelope/envelope-closed-source.png');

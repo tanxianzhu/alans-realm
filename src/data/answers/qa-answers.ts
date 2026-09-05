@@ -13,6 +13,7 @@ export type QaAnswer = {
   speaker: string;
   audioSrc: string;
   audioType: string;
+  comicSrc?: string;
   transcript: string[];
 };
 
@@ -38,10 +39,11 @@ export const qaAnswers: QaAnswer[] = [
     id: 'win-games',
     slug: 'how-to-win-all-the-games',
     asker: 'Dorothy',
-    question: 'how can I win all the games 🤔',
+    question: 'How can I win all the games 🤔',
     speaker: 'Alan · An answer for Dorothy',
     audioSrc: '/audio/economics/qa/win-games.m4a',
     audioType: 'audio/mp4',
+    comicSrc: '/images/qa/comics/win-games.png',
     transcript: toParagraphs(winGamesTranscript),
   },
   {
@@ -52,6 +54,7 @@ export const qaAnswers: QaAnswer[] = [
     speaker: 'Alan · An answer for Dylan',
     audioSrc: '/audio/economics/qa/play-all-day.m4a',
     audioType: 'audio/mp4',
+    comicSrc: '/images/qa/comics/play-all-day.png',
     transcript: toParagraphs(playAllDayTranscript),
   },
   {
@@ -62,6 +65,7 @@ export const qaAnswers: QaAnswer[] = [
     speaker: 'Alan · An answer for Dorothy',
     audioSrc: '/audio/economics/how-to-learn-game-rules.m4a',
     audioType: 'audio/mp4',
+    comicSrc: '/images/qa/comics/remember-rules.png',
     transcript: toParagraphs(rememberRulesTranscript),
   },
   {
@@ -72,6 +76,7 @@ export const qaAnswers: QaAnswer[] = [
     speaker: 'Alan · An answer for Joy',
     audioSrc: '/audio/economics/qa/science-books.m4a',
     audioType: 'audio/mp4',
+    comicSrc: '/images/qa/comics/science-books.png',
     transcript: toParagraphs(scienceBooksTranscript),
   },
   {
@@ -82,6 +87,7 @@ export const qaAnswers: QaAnswer[] = [
     speaker: 'Alan · An answer for Joy',
     audioSrc: '/audio/economics/qa/love-studying.m4a',
     audioType: 'audio/mp4',
+    comicSrc: '/images/qa/comics/love-studying.png',
     transcript: toParagraphs(loveStudyingTranscript),
   },
 ];

@@ -82,10 +82,10 @@ const speeds = [0.75, 1, 1.25, 1.5, 2];
     color: var(--color-paper);
     cursor: pointer;
     display: flex;
-    height: 3rem;
+    height: 2.5rem;
     justify-content: center;
     padding: 0;
-    width: 3rem;
+    width: 2.5rem;
     transition: background 0.2s ease, transform 0.15s ease;
   }
   .answer-audio__play:hover,
@@ -132,8 +132,9 @@ const speeds = [0.75, 1, 1.25, 1.5, 2];
     min-width: 4.25rem;
     padding: 0.55rem 0.75rem;
   }
-  .answer-audio__speed-trigger svg { height: 0.9rem; width: 0.9rem; }
+  .answer-audio__speed-trigger svg { height: 0.9rem; transition: transform 0.2s ease; width: 0.9rem; }
   .answer-audio__speed-menu.is-open .answer-audio__speed-trigger { background: #edf2ec; }
+  .answer-audio__speed-menu.is-open .answer-audio__speed-trigger svg { transform: rotate(180deg); }
   .answer-audio__speeds {
     background: var(--color-paper);
     border: 1px solid var(--color-line);

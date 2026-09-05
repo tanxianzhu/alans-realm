@@ -17,21 +17,22 @@ const answerRoutes: Record<string, string> = {
   'science-books': '/economics/q-and-a/how-many-science-books-at-home/',
 };
 const href = answerRoutes[question.id] ? withBase(answerRoutes[question.id]) : undefined;
+const questionText = question.id === 'win-games' ? 'How can I win all the games 🤔' : question.text;
 ---
 
 <li class="qa-question-row">
   {href ? (
-    <a class="qa-question-row__content qa-question-row__link" href={href} aria-label={`Open Alan's answer: ${question.text}`}>
+    <a class="qa-question-row__content qa-question-row__link" href={href} aria-label={`Open Alan's answer: ${questionText}`}>
       <span class="qa-question-row__number">{String(number).padStart(3, '0')}</span>
       <span class="qa-question-row__name">{question.asker}</span>
-      <span class="qa-question-row__text">{question.text}</span>
+      <span class="qa-question-row__text">{questionText}</span>
       <span class="qa-question-row__arrow" aria-hidden="true">→</span>
     </a>
   ) : (
     <span class="qa-question-row__content">
       <span class="qa-question-row__number">{String(number).padStart(3, '0')}</span>
       <span class="qa-question-row__name">{question.asker}</span>
-      <span class="qa-question-row__text">{question.text}</span>
+      <span class="qa-question-row__text">{questionText}</span>
     </span>
   )}
 </li>
