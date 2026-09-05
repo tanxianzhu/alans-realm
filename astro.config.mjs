@@ -4,6 +4,6 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   output: 'static',
   integrations: [mdx()],
-  site: 'https://tanxianzhu.github.io',
-  base: '/alans-realm',
+  site: process.env.ASTRO_SITE ?? 'https://tanxianzhu.github.io',
+  base: process.env.ASTRO_BASE ?? '/alans-realm',
 });
