@@ -34,7 +34,7 @@ const { title, introduction, section, heroImage, heroImageAlt = '' } = Astro.pro
     grid-template-columns: minmax(0, 1fr) auto;
   }
   .page-intro--economics .page-intro__hero { max-width: clamp(17rem, 34vw, 30rem); }
-  .page-intro--art .page-intro__hero { max-width: clamp(12rem, 21vw, 19rem); }
+  .page-intro--art .page-intro__hero { max-width: clamp(15rem, 26vw, 23rem); transform: translateX(clamp(-5rem, -4vw, -2rem)); }
   .page-intro--wonder { grid-template-columns: 1fr; }
   .page-intro--wonder .page-intro__hero { margin-top: var(--space-3); max-width: min(72vw, 32rem); }
   .page-intro__hero img {
@@ -48,7 +48,7 @@ const { title, introduction, section, heroImage, heroImageAlt = '' } = Astro.pro
     }
     .page-intro__hero { margin: var(--space-3) 0 0; }
     .page-intro--economics .page-intro__hero { max-width: min(72vw, 22rem); }
-    .page-intro--art .page-intro__hero { max-width: min(58vw, 17rem); }
+    .page-intro--art .page-intro__hero { max-width: min(58vw, 17rem); transform: none; }
     .page-intro--wonder .page-intro__hero { max-width: min(82vw, 25rem); }
   }
 </style>
